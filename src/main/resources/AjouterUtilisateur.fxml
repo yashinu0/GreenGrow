@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controlles.AjouterUtilisateur">
+   <children>
+      <Pane layoutX="-6.0" layoutY="59.0" prefHeight="741.0" prefWidth="621.0" style="-fx-background-color: linear-gradient(to bottom, #ccffcc, #e9fee6);" stylesheets="@css/style.css">
+         <children>
+            <ImageView fitHeight="600.0" fitWidth="700.0" layoutX="20.0" layoutY="97.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/app-agriculture-technologie-numerique-agriculture-intelligente_776674-1142726.jpg" />
+               </image>
+            </ImageView>
+            <Label layoutX="218.0" layoutY="41.0" styleClass="smart-farming-text" text="connectez-vous pour suivre vos cultures" />
+            <Label layoutX="196.0" layoutY="69.0" styleClass="smart-farming-text" text="gérer vos commandes et optimiser vos récoltes" />
+            <Label layoutX="220.0" layoutY="14.0" styleClass="smart-farming-text" text="Bienvenue sur votre espace Green Grow " textFill="#e9fee6" />
+            <ImageView fitHeight="80.0" fitWidth="113.0" layoutX="54.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/logo.png" />
+               </image>
+            </ImageView>
+         </children>
+      </Pane>
+      <Pane prefHeight="60.0" prefWidth="1200.0" style="-fx-background-color: #2E8B57;">
+         <children>
+            <Label layoutX="10.0" layoutY="15.0" styleClass="navbar-title" stylesheets="@css/style.css" text="🌿 Green Grow" />
+            <Button layoutX="186.0" layoutY="10.0" minHeight="-Infinity" minWidth="-Infinity" onAction="#FrontEndFx" styleClass="nav-button" stylesheets="@css/style.css" text="Accueil" />
+            <Button layoutX="1100.0" layoutY="10.0" onAction="#loginFront" styleClass="nav-button" stylesheets="@css/style.css" text="Login" />
+         </children>
+      </Pane>
+      <ScrollPane layoutX="600.0" layoutY="59.0" prefHeight="741.0" prefWidth="606.0">
+         <content>
+            <Pane prefHeight="1027.0" prefWidth="600.0" style="-fx-background-color: white; -fx-background-radius: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 20, 0, 0, 0);">
+               <children>
+                  <VBox alignment="CENTER" layoutX="40.0" layoutY="30.0" prefWidth="520.0" spacing="25">
+                     <children>
+                        <ImageView fitHeight="41.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@images/icon.png" />
+                           </image>
+                        </ImageView>
+                        <Label styleClass="h1" stylesheets="@css/style.css" text="Inscription">
+                           <font>
+                              <Font size="32.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="15">
+                           <children>
+                              <Label prefWidth="120" styleClass="info" stylesheets="@css/style.css" text="Nom" />
+                              <TextField fx:id="nom_user" prefHeight="40" prefWidth="380" styleClass="textfield" stylesheets="@css/style.css" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15">
+                           <children>
+                              <Label prefWidth="120" styleClass="info" stylesheets="@css/style.css" text="Prenom" />
+                              <TextField fx:id="prenom_user" prefHeight="40" prefWidth="380" styleClass="textfield" stylesheets="@css/style.css" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15">
+                           <children>
+                              <Label prefWidth="120" styleClass="info" stylesheets="@css/style.css" text="Email" />
+                              <TextField fx:id="email_user" prefHeight="40" prefWidth="380" styleClass="textfield" stylesheets="@css/style.css" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15">
+                           <children>
+                              <Label prefWidth="120" styleClass="info" stylesheets="@css/style.css" text="Mot de passe" />
+                              <PasswordField fx:id="mot_de_passe_user" prefHeight="40" prefWidth="380" styleClass="textfield" stylesheets="@css/style.css" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15">
+                           <children>
+                              <Label prefWidth="120" styleClass="info" stylesheets="@css/style.css" text="Confirmer" />
+                              <PasswordField fx:id="cpwd_user" prefHeight="40" prefWidth="380" styleClass="textfield" stylesheets="@css/style.css" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15">
+                           <children>
+                              <Label prefWidth="120" styleClass="info" stylesheets="@css/style.css" text="Telephone" />
+                              <TextField fx:id="telephone_user" prefHeight="40" prefWidth="380" styleClass="textfield" stylesheets="@css/style.css" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15">
+                           <children>
+                              <Label prefWidth="120" styleClass="info" stylesheets="@css/style.css" text="Adresse" />
+                              <TextField fx:id="adresse_user" prefHeight="40" prefWidth="380" styleClass="textfield" stylesheets="@css/style.css" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15">
+                           <children>
+                              <Label prefWidth="120" styleClass="info" stylesheets="@css/style.css" text="Ville" />
+                              <TextField fx:id="ville_user" prefHeight="40" prefWidth="380" styleClass="textfield" stylesheets="@css/style.css" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15">
+                           <children>
+                              <Label prefWidth="120" styleClass="info" stylesheets="@css/style.css" text="Code Postal" />
+                              <TextField fx:id="code_postal_user" prefHeight="40" prefWidth="380" styleClass="textfield" stylesheets="@css/style.css" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER" spacing="30" style="-fx-padding: 30 0 0 0;">
+                           <children>
+                              <Button onAction="#annuler" prefHeight="50" prefWidth="200" styleClass="button-secondary" stylesheets="@css/style.css" text="Annuler" />
+                              <Button onAction="#ajouterU" prefHeight="50" prefWidth="200" styleClass="button-primary" stylesheets="@css/style.css" text="S'inscrire" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </Pane>
+         </content>
+      </ScrollPane>
+   </children>
+</AnchorPane>
