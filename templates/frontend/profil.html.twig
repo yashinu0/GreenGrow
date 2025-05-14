@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block css %}
+{{ parent() }}
+<style>
+.container1 {
+    max-width: 800px;
+    margin: auto;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #007bff;
+    text-align: center;
+}
+
+.btn-primary {
+    width: 100%;
+}
+
+</style>
+
+
+
+{% endblock %}
+
+{% block title %}Modifier Mon Profil{% endblock %}
+
+{% block section %}
+<br><br><br><br><br>
+    <div class="container1">
+        <h1>Modifier Mon Profil</h1>
+        {{ form_start(form) }}
+            {{ form_row(form.nom_user) }}
+            {{ form_row(form.prenom_user) }}
+            {{ form_row(form.email_user) }}
+            {{ form_row(form.Adresse_user) }}
+            {{ form_row(form.Ville_user) }}
+            {{ form_row(form.Code_postal_user) }}
+            {{ form_row(form.Telephone_user) }}
+
+
+
+
+
+            <button class="btn btn-primary" type="submit">Enregistrer les modifications</button>
+        {{ form_end(form) }}
+    </div>
+    <br><br><br><br>
+{% endblock %}
+
+{% block js %}
+
+{{ parent() }}
+
+{% endblock %}

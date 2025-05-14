@@ -1,0 +1,181 @@
+{% extends 'basefeed.html.twig' %}
+
+{% block title %}Mes réclamations{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        .reclamation-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+        .reclamation-card:hover {
+            transform: translateY(-5px);
+        }
+        .card-header {
+            background: #28a745;
+            color: white;
+            border-radius: 15px 15px 0 0;
+            padding: 15px;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .status-badge {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+            color: white;
+        }
+        .bg-warning {
+            background-color: #ffc107 !important;
+            color: #000 !important;
+        }
+        .bg-primary {
+            background-color: #0d6efd !important;
+            color: #fff !important;
+        }
+        .bg-success {
+            background-color: #198754 !important;
+            color: #fff !important;
+        }
+        .bg-danger {
+            background-color: #dc3545 !important;
+            color: #fff !important;
+        }
+        .bg-info {
+            background-color: #0dcaf0 !important;
+            color: #000 !important;
+        }
+        .btn-custom {
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        .btn-primary {
+            color: #28a745;
+            background-color: #007bff;
+            background-image: none;
+            border-color: #28a745;
+        }
+        .btn-primary:hover {
+            color: #28a745;
+            background-color: #0056b3;
+            background-image: none;
+            border-color: #28a745;
+        }
+        .btn-outline-primary {
+            color: #28a745;
+            background-color: #0056b3;
+            background-image: none;
+            border-color: #28a745;
+        }
+        .btn-outline-primary:hover {
+            color: #28a745;
+            background-color: #0056b3;
+            background-image: none;
+            border-color: #28a745;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+   {% include 'frontend/header.html.twig' %}
+      
+      <div style="height: 50px;"></div>
+
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h2">Mes réclamations</h1>
+            <a href="{{ path('app_produitss') }}" class="btn btn-outline-primary btn-custom">
+                <i class="fas fa-arrow-left me-2"></i>Retour aux produits
+            </a>
+        </div>
+
+        {% if reclamations|length > 0 %}
+            <div class="row">
+                {% for reclamation in reclamations %}
+                    <div class="col-md-6">
+                        <div class="reclamation-card">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Réclamation #{{ reclamation.id }}</h5>
+                                    {% set status = reclamation.statutRec|replace({' ': '_'})|lower %}
+                                    <span class="status-badge
+                                        {% if status == 'pending' %}bg-warning
+                                        {% elseif status == 'in_progress' %}bg-primary
+                                        {% elseif status == 'resolved' %}bg-success
+                                        {% else %}bg-secondary{% endif %}">
+                                        {% if status == 'pending' %}
+                                            En attente
+                                        {% elseif status == 'in_progress' %}
+                                            En cours
+                                        {% elseif status == 'resolved' %}
+                                            Résolue
+                                        {% else %}
+                                            Fermée
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <strong><i class="fas fa-box me-3"></i> Produit :</strong>
+                                    <span>{{ reclamation.produit ? reclamation.produit.nomProduit : 'Non spécifié' }}</span>
+                                </div>
+                                <div class="mb-3">
+                                    <strong><i class="fas fa-calendar-alt me-3"></i> Date :</strong>
+                                    <span>{{ reclamation.dateRec|date('d/m/Y H:i') }}</span>
+                                </div>
+                                <div class="mb-3">
+                                    <strong><i class="fas fa-tag me-3"></i> Type :</strong>
+                                    {% set desc = reclamation.descriptionRec|lower %}
+                                    {% if 'défectueux' in desc %}
+                                        <span class="badge bg-danger">Produit défectueux</span>
+                                    {% elseif 'livraison' in desc %}
+                                        <span class="badge bg-warning">Problème de livraison</span>
+                                    {% elseif 'non conforme' in desc %}
+                                        <span class="badge bg-info">Produit non conforme</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ reclamation.descriptionRec }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="text-end">
+                                    <a href="{{ path('app_reclamation_show', {'id': reclamation.id}) }}" class="btn btn-primary btn-custom">
+                                        <i class="fas fa-eye me-2"></i>Voir les détails
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-inbox fa-3x mb-3 text-muted"></i>
+                <h3>Aucune réclamation</h3>
+                <p class="text-muted">Vous n'avez pas encore soumis de réclamation.</p>
+            </div>
+        {% endif %}
+            <div style="height: 50px;"></div>
+
+    </div>
+    {% include 'frontend/footer.html.twig' %}
+
+{% endblock %}

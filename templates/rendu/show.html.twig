@@ -1,0 +1,144 @@
+{% extends 'backend/indexbackend.html.twig' %}
+
+{% block title %}Rendu{% endblock %}
+
+{% block css %}
+{{ parent() }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
+<link rel="stylesheet" href="{{ asset('css/mdb.min.css') }}" />
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+
+    .card {
+        border: 3px solidrgb(77, 82, 87) !important;
+        border-radius: 12px !important;
+        padding: 20px;
+        background: rgb(64, 64, 69);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 20px;
+        color: white;
+    }
+
+    .table {
+        width: 100%;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .table th {
+        font-weight: 700;
+        font-size: 1.2rem;
+        background-color:rgb(147, 173, 200) !important;
+        padding: 15px;
+        text-align: left;
+    }
+
+    .table td {
+        padding: 15px;
+        font-size: 1rem;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .btn-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+    .btn {
+        padding: 12px 20px;
+        font-size: 1rem;
+        border-radius: 8px;
+        text-decoration: none;
+        color: white;
+        transition: background 0.3s ease;
+    }
+
+    .btn-primary {
+        background: #57b846;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background: #0f6100;
+    }
+
+    .btn-secondary {
+        background:rgb(37, 85, 127);
+    }
+
+    .btn-secondary:hover {
+        background:rgb(64, 100, 135);
+    }
+
+    .btn-danger {
+        background: #dc3545 !important;
+        border: none !important;
+        font-weight: bold;
+    }
+
+    .btn-danger:hover {
+        background: #c82333;
+    }
+    .delete-form {
+        display: inline;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <h1>Rendu Details</h1>
+
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th>Id</th>
+                    <td>{{ rendu.id_rendu }}</td>
+                </tr>
+                <tr>
+                    <th>Message Rendu</th>
+                    <td>{{ rendu.messageRendu }}</td>
+                </tr>
+                <tr>
+                    <th>Type Rendu</th>
+                    <td>{{ rendu.typeRendu }}</td>
+                </tr>
+                <tr>
+                    <th>Date Envoi</th>
+                    <td>{{ rendu.DateEnvoiRendu ? rendu.DateEnvoiRendu|date('Y-m-d') : 'N/A' }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="btn-container">
+            <a href="{{ path('app_rendu_index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to list
+            </a>
+            <a href="{{ path('app_rendu_edit', {'id': rendu.id_rendu}) }}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+            {{ include('rendu/_delete_form.html.twig') }}
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

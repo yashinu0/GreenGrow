@@ -1,0 +1,122 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        .tracking-container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .status-panel {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #map {
+            height: 500px !important;
+            width: 100% !important;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1;
+        }
+        .delivery-info {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        .delivery-status {
+            font-weight: bold;
+            color: #28a745;
+        }
+        .last-update {
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+{% endblock %}
+
+{% block body %}
+    <div class="tracking-container">
+        <div class="status-panel">
+            <h2>Suivi de votre livraison</h2>
+            <p><strong>Commande :</strong> #{{ commande.idCommande }}</p>
+            <p><strong>Statut :</strong> {{ commande.statueCommande }}</p>
+            <p><strong>Date :</strong> {{ commande.dateCommande|date('d/m/Y H:i') }}</p>
+            <p><strong>Livreur :</strong> {{ commande.livreurCommande.nomLivreur }} {{ commande.livreurCommande.prenomLivreur }}</p>
+        </div>
+
+        <div id="map"></div>
+        
+        <div class="delivery-info">
+            <p class="delivery-status">Votre livreur est en route</p>
+            <p class="last-update" id="lastUpdate">Dernière mise à jour : --:--</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Créer la carte avec une position par défaut (Tunis)
+            const map = L.map('map', {
+                center: [36.8065, 10.1815],
+                zoom: 13,
+                zoomControl: true
+            });
+
+            // Ajouter la couche de tuiles OpenStreetMap
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: ' OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(map);
+
+            let marker;
+
+            // Fonction pour mettre à jour le marqueur
+            function updateMarker(position) {
+                const latLng = [position.latitude, position.longitude];
+                if (!marker) {
+                    marker = L.marker(latLng).addTo(map);
+                } else {
+                    marker.setLatLng(latLng);
+                }
+                map.setView(latLng, 15);
+            }
+
+            // Récupérer la position initiale
+            fetch('/livraison/{{ commande.idCommande }}/position')
+                .then(response => response.json())
+                .then(position => {
+                    if (position.latitude && position.longitude) {
+                        updateMarker(position);
+                        document.getElementById('lastUpdate').textContent = 
+                            'Dernière mise à jour : ' + new Date(position.lastUpdate).toLocaleTimeString();
+                    }
+                })
+                .catch(error => console.error('Erreur:', error));
+
+            // Configurer Mercure pour les mises à jour en temps réel
+            const url = new URL('{{ mercure('livraison/' ~ commande.idCommande) }}');
+            const eventSource = new EventSource(url);
+
+            eventSource.onmessage = event => {
+                const position = JSON.parse(event.data);
+                updateMarker(position);
+                document.getElementById('lastUpdate').textContent = 
+                    'Dernière mise à jour : ' + new Date(position.lastUpdate).toLocaleTimeString();
+            };
+
+            // S'assurer que la carte est correctement dimensionnée
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 100);
+        });
+    </script>
+{% endblock %}

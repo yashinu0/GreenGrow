@@ -1,0 +1,140 @@
+{% extends 'backend/indexbackend.html.twig' %}
+
+{% block title %}Utilisateur{% endblock %}
+
+{% block content %}
+    <h1 class="dynamic-title">Détails de l'Utilisateur</h1>
+
+    <div class="table-container">
+        <table class="styled-table">
+            <tbody>
+                <tr>
+                    <th>ID</th>
+                    <td>{{ utilisateur.idUser }}</td>
+                </tr>
+                <tr>
+                    <th>Nom</th>
+                    <td>{{ utilisateur.nomUser }}</td>
+                </tr>
+                <tr>
+                    <th>Prénom</th>
+                    <td>{{ utilisateur.prenomUser }}</td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td>{{ utilisateur.emailUser }}</td>
+                </tr>
+                <tr>
+                    <th>Mot de Passe</th>
+                    <td>{{ utilisateur.getMotDePasseUser() }}</td> <!-- Masquer le mot de passe pour des raisons de sécurité -->
+                </tr>
+                <tr>
+                    <th>Rôle</th>
+                    <td>{{ utilisateur.roleUser }}</td>
+                </tr>
+                <tr>
+                    <th>Adresse</th>
+                    <td>{{ utilisateur.adresseUser }}</td>
+                </tr>
+                <tr>
+                    <th>Code Postal</th>
+                    <td>{{ utilisateur.codePostalUser }}</td>
+                </tr>
+                <tr>
+                    <th>Ville</th>
+                    <td>{{ utilisateur.villeUser }}</td>
+                </tr>
+                <tr>
+                    <th>Téléphone</th>
+                    <td>{{ utilisateur.telephoneUser }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="button-container">
+        <button class="btn btn-back" onclick="window.location.href='{{ path('app_utilisateur_index') }}'">Retour à la liste</button>
+    </div>
+
+   
+{% endblock %}
+
+{% block css %}
+{{ parent() }}
+
+<style>
+/* Arrière-plan global */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Titre stylisé */
+.dynamic-title {
+    font-size: 2.2rem;
+    font-weight: bold;
+    text-align: center;
+    color: #1f2937; /* Bleu nuit */
+    letter-spacing: 1.5px;
+    padding: 20px 0;
+}
+
+/* Table stylisée */
+.table-container {
+    width: 80%;
+    margin: 20px auto;
+    overflow-x: auto;
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.styled-table th, .styled-table td {
+    padding: 14px 18px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+.styled-table th {
+    background-color: #f9fafb;
+    color: #1f2937; /* Couleur neutre, plus professionnelle */
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+/* Effet de survol */
+.styled-table tr:hover {
+    background-color: #eef2ff;
+    transition: background 0.3s ease-in-out;
+}
+
+/* Boutons */
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: #57b846;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.btn a {
+    color: white;
+    text-decoration: none;
+}
+
+.btn:hover {
+    background: rgb(15, 97, 0);
+}
+</style>
+{% endblock %}

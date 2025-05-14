@@ -1,0 +1,86 @@
+
+{% block title %}<title>Password Reset Email Sent</title>{% endblock %}
+
+{% block css %}
+
+<style>
+/* Centrage et mise en page */
+body {
+    background-color: #f4f7f6;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Conteneur principal */
+#password-reset-container {
+    max-width: 500px;
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Titre */
+#password-reset-title {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* Texte principal */
+.password-reset-text {
+    font-size: 16px;
+    color: #555;
+    line-height: 1.5;
+}
+
+/* Lien de réessai */
+.password-reset-link {
+    color: #3b882d;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.password-reset-link:hover {
+    text-decoration: underline;
+}
+
+/* Bouton stylisé */
+.password-reset-btn {
+    display: inline-block;
+    background-color: #3b882d;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.password-reset-btn:hover {
+    background-color: #166800;
+}
+
+</style>
+{% endblock %}
+
+{% block section %}
+<div id="password-reset-container">
+    <h1 id="password-reset-title">Password Reset Email Sent</h1>
+    <p class="password-reset-text">
+        If an account matching your email exists, then an email was just sent that contains a link that you can use to reset your password.
+        This link will expire in {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
+    </p>
+    <p class="password-reset-text">
+        If you don't receive an email, please check your spam folder or 
+        <a href="{{ path('app_forgot_password_request') }}" class="password-reset-link">try again</a>.
+    </p>
+    <a href="{{ path('app_login') }}" class="password-reset-btn">Return to Login</a>
+</div>
+{% endblock %}
+

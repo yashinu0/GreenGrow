@@ -1,0 +1,225 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<body class="main-layout" style="background-color: white; margin: 0px; height: 100vh; display: flex; flex-direction: column;">
+    
+    <header>
+        <div class="header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 logo_section">
+                        <div class="logo">
+                            <a href="index.html"><img src="{{ asset('images/logo.png') }}" alt="GreenGrow Logo" width="85" height="200"></a>
+                        </div>
+                    </div>
+                    <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9">
+                        <div class="location_icon_bottum_tt">
+                            <ul>
+                                <li><img src="{{ asset('icon/email1.png') }}" alt="Email Icon">GreenGrow@gmail.com</li>
+                                <li><img src="{{ asset('icon/call1.png') }}" alt="Phone Icon">(+216) 25845846</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Bar with Active Link Highlighting and Alert Badge -->
+    <nav class="navbar">
+        <ul class="navbar-list">
+                    <li><a href="{{ path('app_user') }}">Home</a></li>
+
+            <li><a href="{{ path('app_frendu') }}">Your Plants</a></li>
+
+            <li>
+                <a href="{{ path('app_falert') }}" class="active">Alert</a>
+                <span id="alert-badge" class="alert-badge" style="display: none;"></span>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content" style="flex-grow: 1; padding: 20px;">
+        <h2 style="color: #0e2903; margin-bottom: 20px;">Critical Plants Alerts</h2>
+        
+        <!-- Status summary section -->
+        <div id="status-summary" class="status-summary" style="margin-bottom: 20px; padding: 15px; border-radius: 8px; text-align: center;">
+            <!-- Will be filled dynamically -->
+        </div>
+        
+        <div id="alert-cards-container" class="alert-cards-container" style="display: flex; flex-direction: column; gap: 15px;">
+            <!-- Alert cards will be dynamically added here -->
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="margin-top: auto;">
+        <div class="footer top_layer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+                        <div class="address">
+                            <a href="index.html"><img src="{{ asset('images/logo.png') }}" alt="GreenGrow Logo" width="85" height="200"></a>
+                            <p>Optimisez votre agriculture avec nos capteurs IoT intelligents</p>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+                        <div class="address">
+                            <h3>Contact Us</h3>
+                            <ul class="loca">
+                                <li><a href="#"><img src="{{ asset('icon/loc.png') }}" alt="Location Icon">Ghazela, Ariana Tunis</a></li>
+                                <li><a href="#"><img src="{{ asset('icon/email.png') }}" alt="Email Icon">GreenGrow@gmail.com</a></li>
+                                <li><a href="#"><img src="{{ asset('icon/call.png') }}" alt="Phone Icon">+216 25845846</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <div class="container">
+                <p>© 2025 All Rights Reserved. Design By GreenGrow</p>
+            </div>
+        </div>
+    </footer>
+
+    <style>
+        /* Styles for alert badge and cards */
+        .navbar-list li {
+            position: relative;
+        }
+        
+        .alert-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #ff4d4d;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status-summary {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border-left: 5px solid #4caf50;
+            font-weight: bold;
+        }
+        
+        .status-summary.critical {
+            background-color: #ffebee;
+            color: #c62828;
+            border-left: 5px solid #f44336;
+        }
+        
+        .alert-card {
+            background-color: #fff3e0;
+            border-left: 5px solid #ff9800;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .alert-card h3 {
+            color: #e65100;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        
+        .recommendation {
+            margin-top: 5px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .recommendation:before {
+            content: "•";
+            position: absolute;
+            left: 5px;
+            color: #ff9800;
+        }
+        
+        .add-plant-btn {
+            background-color: #0e2903;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+
+    <script>
+        // Load data and render alerts on page load
+        document.addEventListener("DOMContentLoaded", function () {
+            displayAlerts();
+            updateAlertBadge();
+        });
+
+        // Update alert badge count
+        function updateAlertBadge() {
+            const savedPlants = JSON.parse(localStorage.getItem("userPlants")) || [];
+            const criticalPlants = savedPlants.filter(plant => plant.status === "critical");
+            const badgeElement = document.getElementById("alert-badge");
+            
+            if (criticalPlants.length > 0) {
+                badgeElement.textContent = criticalPlants.length;
+                badgeElement.style.display = "flex";
+            } else {
+                badgeElement.style.display = "none";
+            }
+        }
+
+        // Display alerts for critical plants
+        async function displayAlerts() {
+            const savedPlants = JSON.parse(localStorage.getItem("userPlants")) || [];
+            const criticalPlants = savedPlants.filter(plant => plant.status === "critical");
+            const alertCardsContainer = document.getElementById("alert-cards-container");
+            const statusSummary = document.getElementById("status-summary");
+
+            // Clear existing content
+            alertCardsContainer.innerHTML = "";
+            statusSummary.innerHTML = "";
+
+            if (criticalPlants.length === 0) {
+                statusSummary.className = "status-summary";
+                statusSummary.textContent = "No critical alerts. All plants are in good condition!";
+                return;
+            }
+
+            // Update status summary
+            statusSummary.className = "status-summary critical";
+            statusSummary.textContent = `You have ${criticalPlants.length} critical plant(s) that need attention.`;
+
+            // Add alert cards for each critical plant
+            criticalPlants.forEach(plant => {
+                const plantRecommendations = JSON.parse(localStorage.getItem("plantRecommendations")) || {};
+                const recommendations = plantRecommendations[plant.name]?.recommendations || [];
+
+                const alertCard = document.createElement("div");
+                alertCard.className = "alert-card";
+                alertCard.innerHTML = `
+                    <h3>${plant.name}</h3>
+                    <p>${plant.statusText}</p>
+                    <div class="recommendations">
+                        ${recommendations.map(rec => `<p class="recommendation">${rec}</p>`).join("")}
+                    </div>
+                `;
+                alertCardsContainer.appendChild(alertCard);
+
+                // Save alert to the backend
+                
+            });
+        }
+    </script>
+</body>
+{% endblock %}

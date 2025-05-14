@@ -1,0 +1,666 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<body class="main-layout">
+    <!-- Header and Navigation Bar -->
+    <header>
+        <div class="header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 logo_section">
+                        <div class="logo">
+                            <a href="index.html"><img src="{{ asset('images/logo.png') }}" alt="GreenGrow Logo" width="85" height="200"></a>
+                        </div>
+                    </div>
+                    <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9">
+                        <div class="location_icon_bottum_tt">
+                            <ul>
+                                <li><img src="{{ asset('icon/email1.png') }}" alt="Email Icon">GreenGrow@gmail.com</li>
+                                <li><img src="{{ asset('icon/call1.png') }}" alt="Phone Icon">(+216) 25845846</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Bar with Active Link Highlighting and Alert Badge -->
+    <nav class="navbar">
+        <ul class="navbar-list">
+            <li><a href="{{ path('app_user') }}">Home</a></li>
+            <li><a href="{{ path('app_frendu') }}" class="active">Your Plants</a></li>
+            <li>
+                <a href="{{ path('app_falert') }}">Alert</a>
+                <span id="alert-badge" class="alert-badge" style="display: none;"></span>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Weather Information Section -->
+<div class="weather-container">
+    <!-- Current Weather -->
+    <div class="weather-card current-weather">
+        <h3>Today</h3>
+        <p><strong>Temperature:</strong> {{ weather.current.temperature }}°C</p>
+        <p><strong>Condition:</strong> {{ weather.current.weather }} ({{ weather.current.description }})</p>
+        {% if weather.current.weather == 'Rain' %}
+            <p class="rain-warning">⚠️ Don't water your plants today, it will rain!</p>
+        {% endif %}
+    </div>
+
+    <!-- 3-Day Forecast -->
+    {% for day in weather.forecast %}
+        <div class="weather-card forecast-day">
+            <h3>{{ day.date }}</h3>
+            <p><strong>Temperature:</strong> {{ day.temperature }}°C</p>
+            <p><strong>Condition:</strong> {{ day.weather }} ({{ day.description }})</p>
+            {% if day.weather == 'Rain' %}
+                <p class="rain-warning">⚠️ Don't water your plants, it will rain!</p>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+
+    <!-- Alert Container for Plant Status -->
+    <div id="plant-status-alert" class="plant-status-alert" style="display: none; padding: 10px 20px; margin: 15px auto; max-width: 800px; text-align: center; border-radius: 8px;">
+        <span id="plant-status-message"></span>
+        <button onclick="dismissAlert()" style="background: none; border: none; float: right; font-weight: bold; cursor: pointer;">×</button>
+    </div>
+
+    <!-- Plant Monitoring Section -->
+    <section class="plant-monitoring" style="margin-top: 10px;">
+        <div class="container">
+            <div class="row" id="plant-cards-container" style="display: flex; justify-content: center; flex-wrap: wrap;">
+                <!-- Plant cards will be dynamically added here -->
+            </div>
+            <div class="row" style="display: flex; justify-content: center; margin: 10px;">
+                <div class="col-md-6 text-center">
+                    <button class="add-plant-btn" onclick="showAddPlantForm()">Add Plant</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add Plant Form (Initially Hidden) -->
+    <div id="add-plant-form" style="display: none; max-width: 500px; margin: 0 auto; padding: 20px; background: #f5f5f5; border-radius: 12px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+        <h3 style="color: #052501; text-align: center; margin-bottom: 20px;">Add New Plant</h3>
+        
+        <div style="margin-bottom: 15px;">
+            <label for="plantName" style="display: block; margin-bottom: 5px; font-weight: 500;">Plant Name:</label>
+            <input type="text" id="plantName" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ccc;">
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Plant Type:</label>
+            <div style="display: flex; gap: 20px;">
+                <div>
+                    <input type="checkbox" id="plantTypeIndoor" name="plantType" value="Indoor" style="margin-right: 5px;">
+                    <label for="plantTypeIndoor">Indoor</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="plantTypeOutdoor" name="plantType" value="Outdoor" style="margin-right: 5px;">
+                    <label for="plantTypeOutdoor">Outdoor</label>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+            <label for="lightValue" style="display: block; margin-bottom: 5px; font-weight: 500;">Light (%):</label>
+            <input type="text" id="lightValue" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ccc;">
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+            <label for="humidityValue" style="display: block; margin-bottom: 5px; font-weight: 500;">Humidity (%):</label>
+            <input type="text" id="humidityValue" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ccc;">
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+            <label for="temperatureValue" style="display: block; margin-bottom: 5px; font-weight: 500;">Temperature (°C):</label>
+            <input type="text" id="temperatureValue" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ccc;">
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+            <label for="waterValue" style="display: block; margin-bottom: 5px; font-weight: 500;">Water (ml):</label>
+            <input type="text" id="waterValue" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ccc;">
+        </div>
+        
+        <div style="display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
+            <button onclick="savePlant()" style="background-color: #0e2903; color: white; border: none; border-radius: 25px; padding: 10px 20px; cursor: pointer;">Save Plant</button>
+            <button onclick="cancelAddPlant()" style="background-color: #4a4949; color: white; border: none; border-radius: 25px; padding: 10px 20px; cursor: pointer;">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer top_layer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+                        <div class="address">
+                            <a href="index.html"><img src="{{ asset('images/logo.png') }}" alt="GreenGrow Logo" width="85" height="200"></a>
+                            <p>Optimisez votre agriculture avec nos capteurs IoT intelligents</p>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+                        <div class="address">
+                            <h3>Contact Us</h3>
+                            <ul class="loca">
+                                <li><a href="#"><img src="{{ asset('icon/loc.png') }}" alt="Location Icon">Ghazela, Ariana Tunis</a></li>
+                                <li><a href="#"><img src="{{ asset('icon/email.png') }}" alt="Email Icon">GreenGrow@gmail.com</a></li>
+                                <li><a href="#"><img src="{{ asset('icon/call.png') }}" alt="Phone Icon">+216 25845846</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <div class="container">
+                <p>© 2025 All Rights Reserved. Design By GreenGrow</p>
+            </div>
+        </div>
+    </footer>
+
+    <style>
+        /* Add styles for alert badge and plant status alert */
+        .navbar-list li {
+            position: relative;
+        }
+        
+        .alert-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #ff4d4d;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .plant-status-alert {
+            background-color: #e8f5e9;
+            border-left: 5px solid #4caf50;
+            color: #2e7d32;
+        }
+        
+        .plant-status-alert.critical {
+            background-color: #ffebee;
+            border-left: 5px solid #f44336;
+            color: #c62828;
+        }
+        
+        .plant-status-alert.safe {
+            background-color: #e8f5e9;
+            border-left: 5px solid #4caf50;
+            color: #2e7d32;
+        }
+
+        .weather-info {
+            background-color: #e3f2fd;
+            border-left: 10px solid #2196f3;
+            color:rgb(149, 190, 252);
+        }
+
+        .forecast-info {
+        background-color: #e3f2fd;
+        border-left: 10px solid #2196f3;
+        color:rgb(149, 190, 252);
+    }
+
+    .forecast-info p {
+        margin: 5px 0;
+    }
+
+    .forecast-info strong {
+        font-weight: 600;
+    }
+
+    .weather-container {
+        display: flex;
+        justify-content: space-between;
+        margin: 20px;
+        padding: 15px;
+        background-color: #f5f5f5;
+        border-radius: 8px;
+    }
+
+    .weather-card {
+        padding: 15px;
+        border-radius: 8px;
+        flex: 1;
+        margin-right: 10px;
+        color: white;
+    }
+
+    .current-weather {
+        background-color:rgb(123, 195, 126); /* Green */
+    }
+
+    .forecast-day {
+        background-color:rgb(119, 152, 203); /* Blue */
+    }
+
+    .weather-card:last-child {
+        margin-right: 0; /* Remove margin for the last card */
+    }
+
+    .weather-card h3 {
+        margin-top: 0;
+    }
+
+    .weather-card p {
+        margin: 5px 0;
+    }
+
+    .weather-card strong {
+        font-weight: 600;
+    }
+
+    .weather-card .rain-warning {
+        color: #ffeb3b; /* Yellow */
+    }
+
+    </style>
+
+    <script>
+        // Set optimal values for different parameters
+        const optimalValues = {
+            humidity: {
+                min: 40,
+                max: 60
+            },
+            temperature: {
+                min: 14,
+                max: 33
+            },
+            light: {
+                min: 30,
+                max: 70
+            },
+            water: {
+                min: 100,
+                max: 300
+            }
+        };
+
+        // Handle checkbox mutual exclusivity
+        document.getElementById('plantTypeIndoor').addEventListener('change', function() {
+            if(this.checked) {
+                document.getElementById('plantTypeOutdoor').checked = false;
+            }
+        });
+        
+        document.getElementById('plantTypeOutdoor').addEventListener('change', function() {
+            if(this.checked) {
+                document.getElementById('plantTypeIndoor').checked = false;
+            }
+        });
+
+        // Load saved plants on page load
+        document.addEventListener("DOMContentLoaded", function () {
+            loadSavedPlants();
+            updateAlertBadge();
+            // Set indoor as default checked
+            document.getElementById('plantTypeIndoor').checked = true;
+        });
+
+        // Function to load saved plants
+        function loadSavedPlants() {
+            const savedPlants = JSON.parse(localStorage.getItem("userPlants")) || [];
+            const container = document.getElementById("plant-cards-container");
+            
+            // Clear container before adding plants
+            container.innerHTML = "";
+
+            if (savedPlants.length === 0) {
+                container.innerHTML = "<p><br><br><br>There's no plant. Please add a plant.</p>";
+                // Hide any existing alerts
+                document.getElementById("plant-status-alert").style.display = "none";
+            } else {
+                savedPlants.forEach(plant => {
+                    addPlantCard(plant);
+                });
+                updateCardPositions();
+                
+                // Show plant status summary
+                updatePlantStatusSummary(savedPlants);
+            }
+            
+            // Update alert badge
+            updateAlertBadge();
+        }
+
+        // Function to generate recommendations for plants
+        function generateRecommendations(plant) {
+            const lightValue = parseFloat(plant.light);
+            const humidityValue = parseFloat(plant.humidity);
+            const temperatureValue = parseFloat(plant.temperature);
+            const waterValue = parseFloat(plant.water);
+            
+            let recommendations = [];
+            
+            if (lightValue < optimalValues.light.min) {
+                recommendations.push(`Move your ${plant.name} to a brighter location or provide additional grow lights.`);
+            } else if (lightValue > optimalValues.light.max) {
+                recommendations.push(`Move your ${plant.name} to a location with less direct sunlight or provide some shade.`);
+            }
+            
+            if (humidityValue < optimalValues.humidity.min) {
+                recommendations.push(`Increase humidity around your ${plant.name} by misting the plant or using a humidifier.`);
+            } else if (humidityValue > optimalValues.humidity.max) {
+                recommendations.push(`Reduce humidity around your ${plant.name} by improving air circulation or using a dehumidifier.`);
+            }
+            
+            if (temperatureValue < optimalValues.temperature.min) {
+                recommendations.push(`Increase the temperature around your ${plant.name} or move it to a warmer location.`);
+            } else if (temperatureValue > optimalValues.temperature.max) {
+                recommendations.push(`Reduce the temperature around your ${plant.name} or move it to a cooler location.`);
+            }
+            
+            if (waterValue < optimalValues.water.min) {
+                const waterNeeded = optimalValues.water.min - waterValue;
+                recommendations.push(`Water your ${plant.name} with approximately ${waterNeeded}ml of water.`);
+            } else if (waterValue > optimalValues.water.max) {
+                recommendations.push(`Your ${plant.name} may be overwatered. Allow the soil to dry out before watering again.`);
+            }
+            
+            // Create a plant info object with detailed recommendations
+            const plantInfo = {
+                name: plant.name,
+                status: plant.status,
+                recommendations: recommendations
+            };
+            
+            return plantInfo;
+        }
+
+        // Function to save plant recommendations to localStorage
+        function saveRecommendations(plantInfo) {
+            const plantRecommendations = JSON.parse(localStorage.getItem("plantRecommendations")) || {};
+            plantRecommendations[plantInfo.name] = plantInfo;
+            localStorage.setItem("plantRecommendations", JSON.stringify(plantRecommendations));
+        }
+
+        // Update plant status summary
+        function updatePlantStatusSummary(plants) {
+            const alertElement = document.getElementById("plant-status-alert");
+            const messageElement = document.getElementById("plant-status-message");
+            
+            // Count critical plants
+            const criticalPlants = plants.filter(plant => plant.status === "critical");
+            const safePlants = plants.filter(plant => plant.status === "safe");
+            
+            if (criticalPlants.length > 0) {
+                alertElement.className = "plant-status-alert critical";
+                messageElement.textContent = `Alert: ${criticalPlants.length} of your plants need attention. Please check the Alert page for details.`;
+                alertElement.style.display = "block";
+            } else if (safePlants.length > 0) {
+                alertElement.className = "plant-status-alert safe";
+                messageElement.textContent = "All your plants are in good condition. Great job taking care of them!";
+                alertElement.style.display = "block";
+            } else {
+                alertElement.style.display = "none";
+            }
+        }
+
+        // Dismiss alert
+        function dismissAlert() {
+            document.getElementById("plant-status-alert").style.display = "none";
+        }
+
+        // Update alert badge
+        function updateAlertBadge() {
+            const savedPlants = JSON.parse(localStorage.getItem("userPlants")) || [];
+            const criticalPlants = savedPlants.filter(plant => plant.status === "critical");
+            const badgeElement = document.getElementById("alert-badge");
+            
+            if (criticalPlants.length > 0) {
+                badgeElement.textContent = criticalPlants.length;
+                badgeElement.style.display = "flex";
+            } else {
+                badgeElement.style.display = "none";
+            }
+        }
+
+        // Show add plant form
+        function showAddPlantForm() {
+            document.getElementById("add-plant-form").style.display = "block";
+        }
+
+        // Cancel add plant
+        function cancelAddPlant() {
+            document.getElementById("add-plant-form").style.display = "none";
+            clearFormFields();
+        }
+
+        // Clear form fields
+        function clearFormFields() {
+            document.getElementById("plantName").value = "";
+            document.getElementById("plantTypeIndoor").checked = true;
+            document.getElementById("plantTypeOutdoor").checked = false;
+            document.getElementById("lightValue").value = "";
+            document.getElementById("humidityValue").value = "";
+            document.getElementById("temperatureValue").value = "";
+            document.getElementById("waterValue").value = "";
+        }
+
+        // Get selected plant type
+        function getSelectedPlantType() {
+            if (document.getElementById("plantTypeIndoor").checked) {
+                return "Indoor";
+            } else if (document.getElementById("plantTypeOutdoor").checked) {
+                return "Outdoor";
+            } else {
+                return "Indoor"; // Default to Indoor if none selected
+            }
+        }
+
+        // Determine plant status based on sensor values
+        function determinePlantStatus(light, humidity, temperature, water) {
+            // Remove percentage signs and units for comparison
+            const lightValue = parseFloat(light);
+            const humidityValue = parseFloat(humidity);
+            const temperatureValue = parseFloat(temperature);
+            const waterValue = parseFloat(water);
+            
+            // Check if values are outside optimal ranges
+            const isLightCritical = lightValue < optimalValues.light.min || lightValue > optimalValues.light.max;
+            const isHumidityCritical = humidityValue < optimalValues.humidity.min || humidityValue > optimalValues.humidity.max;
+            const isTemperatureCritical = temperatureValue < optimalValues.temperature.min || temperatureValue > optimalValues.temperature.max;
+            const isWaterCritical = waterValue < optimalValues.water.min || waterValue > optimalValues.water.max;
+            
+            // If any value is critical, the plant status is critical
+            const isCritical = isLightCritical || isHumidityCritical || isTemperatureCritical || isWaterCritical;
+            
+            // Generate status message
+            let statusMessage = "";
+            if (isCritical) {
+                statusMessage = "Attention requise : ";
+                
+                if (isLightCritical) {
+                    statusMessage += "niveau de lumière anormal. ";
+                }
+                if (isHumidityCritical) {
+                    statusMessage += "niveau d'humidité anormal. ";
+                }
+                if (isTemperatureCritical) {
+                    statusMessage += "température anormale. ";
+                }
+                if (isWaterCritical) {
+                    statusMessage += "niveau d'eau anormal. ";
+                }
+            } else {
+                statusMessage = "Votre plante est en bonne santé";
+            }
+            
+            return {
+                status: isCritical ? "critical" : "safe",
+                message: statusMessage
+            };
+        }
+
+        // Save plant
+async function savePlant() {
+    const plantName = document.getElementById("plantName").value.trim();
+
+    if (!plantName) {
+        alert("Please enter a plant name!");
+        return;
+    }
+
+    const lightValue = document.getElementById("lightValue").value;
+    const humidityValue = document.getElementById("humidityValue").value;
+    const temperatureValue = document.getElementById("temperatureValue").value;
+    const waterValue = document.getElementById("waterValue").value;
+
+    // Get plant status based on sensor values
+    const plantStatus = determinePlantStatus(
+        lightValue,
+        humidityValue,
+        temperatureValue,
+        waterValue
+    );
+
+    // Create plant object
+    const plant = {
+        name: plantName,
+        type: getSelectedPlantType(),
+        light: lightValue + "%",
+        humidity: humidityValue + "%",
+        temperature: temperatureValue + " °C",
+        water: waterValue + "ml",
+        status: plantStatus.status,
+        statusText: plantStatus.message
+    };
+
+    // Check if plant already exists
+    const savedPlants = JSON.parse(localStorage.getItem("userPlants")) || [];
+    const plantExists = savedPlants.some(p => p.name === plant.name);
+
+    if (plantExists) {
+        alert("A plant with this name already exists!");
+        return;
+    }
+
+    // Generate and save recommendations for this plant
+    const plantInfo = generateRecommendations(plant);
+    saveRecommendations(plantInfo);
+
+    // Add plant to localStorage
+    savedPlants.push(plant);
+    localStorage.setItem("userPlants", JSON.stringify(savedPlants));
+
+    // Save sensor data to the backend
+    try {
+        const response = await fetch('/save-plant', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(plant),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to save sensor data.');
+        }
+
+        const result = await response.json();
+        console.log(result.message);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+
+    // Reload all plants to display the new one
+    loadSavedPlants();
+
+    // Hide form and clear fields
+    document.getElementById("add-plant-form").style.display = "none";
+    clearFormFields();
+}
+
+        // Add plant card to the UI
+        function addPlantCard(plant) {
+            const container = document.getElementById("plant-cards-container");
+            const plantCardWrapper = document.createElement("div");
+            plantCardWrapper.className = "plant-card-wrapper";
+            
+            plantCardWrapper.innerHTML = `
+                <div class="plant-card ${plant.status}">
+                    <h2>${plant.name}</h2>
+                    <h3>${plant.type}</h3>
+                    <div class="overview">
+                        <p><strong>LIGHT</strong> ${plant.light}</p>
+                        <p><strong>HUMIDITY</strong> ${plant.humidity}</p>
+                        <p><strong>TEMPERATURE</strong> ${plant.temperature}</p>
+                        <p><strong>WATER</strong> ${plant.water}</p>
+                    </div>
+                    <div class="status-alert">
+                        <p class="alert-${plant.status}">${plant.statusText}</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <button class="Delete-btn" onclick="deletePlantCard(this, '${plant.name}')">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(plantCardWrapper);
+        }
+
+        // Delete plant card
+        function deletePlantCard(button, plantName) {
+            button.closest(".plant-card-wrapper").remove();
+            
+            // Remove plant from localStorage
+            const savedPlants = JSON.parse(localStorage.getItem("userPlants")) || [];
+            const updatedPlants = savedPlants.filter(plant => plant.name !== plantName);
+            localStorage.setItem("userPlants", JSON.stringify(updatedPlants));
+            
+            // Also remove from recommendations
+            const plantRecommendations = JSON.parse(localStorage.getItem("plantRecommendations")) || {};
+            if (plantRecommendations[plantName]) {
+                delete plantRecommendations[plantName];
+                localStorage.setItem("plantRecommendations", JSON.stringify(plantRecommendations));
+            }
+            
+            // Reload all plants
+            loadSavedPlants();
+        }
+
+        // Update card positions
+        function updateCardPositions() {
+            const container = document.getElementById("plant-cards-container");
+            const cards = container.querySelectorAll(".plant-card-wrapper");
+            const cardCount = cards.length;
+
+            if (cardCount === 0) return;
+
+            // Clear existing rows
+            container.innerHTML = "";
+
+            // Add plants in rows of 3
+            for (let i = 0; i < cardCount; i += 3) {
+                const row = document.createElement("div");
+                row.className = "plant-row";
+                row.style.display = "flex";
+                row.style.justifyContent = "center";
+                row.style.flexWrap = "wrap";
+                row.style.width = "100%";
+
+                for (let j = i; j < i + 3 && j < cardCount; j++) {
+                    row.appendChild(cards[j]);
+                }
+
+                container.appendChild(row);
+            }
+        }
+    </script>
+</body>
+{% endblock %}

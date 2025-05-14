@@ -1,0 +1,122 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Facture{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10 col-sm-12">
+                <!-- Card Design -->
+                <div class="card shadow-lg border-light rounded-lg">
+                    <div class="card-header text-white text-center" style="background-color: #4E7D3A;">
+                        <h3 class="mb-0">Facture de la Commande #{{ commande.idCommande }}</h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- Table for Command Details -->
+                        <table class="table table-striped">
+                            <tr>
+                                <th>Statut :</th>
+                                <td>{{ commande.statueCommande }}</td>
+                            </tr>
+                            <tr>
+                                <th>Date :</th>
+                                <td>{{ commande.dateCommande ? commande.dateCommande|date('Y-m-d H:i:s') : 'Non définie' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Prix total :</th>
+                                <td>{{ commande.prixtotalCommande }} €</td>
+                            </tr>
+                            <tr>
+                                <th>Mode de paiement :</th>
+                                <td>{{ commande.modepaiementCommande }}</td>
+                            </tr>
+                        </table>
+
+                        <!-- QR Code Section -->
+                        <div class="text-center mb-4">
+                            <h4 class="mb-4">QR Code de la Facture :</h4>
+                            <div class="qr-code-container" style="background: #f8f9fa; padding: 20px; border-radius: 8px; display: inline-block;">
+                                <div id="qr-code-container">
+                                    <img 
+                                        src="{{ path('commande_qrcode', {'id_commande': commande.idCommande}) }}"
+                                        alt="QR Code de la facture"
+                                        style="width: 200px; height: 200px;"
+                                        class="qr-code"
+                                        onerror="handleQrCodeError(this)"
+                                    />
+                                    <div id="qr-error" class="alert alert-danger mt-2" style="display: none;">
+                                        <p>Impossible de charger le QR code</p>
+                                        <small id="error-details" class="d-block mt-2"></small>
+                                        <button onclick="reloadQrCode()" class="btn btn-sm btn-danger mt-2">Réessayer</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                        function handleQrCodeError(img) {
+                            img.style.display = 'none';
+                            const errorDiv = document.getElementById('qr-error');
+                            const errorDetails = document.getElementById('error-details');
+                            
+                            fetch(img.src)
+                                .then(response => {
+                                    if (!response.ok) {
+                                        return response.text().then(text => {
+                                            throw new Error(`HTTP ${response.status}: ${text}`);
+                                        });
+                                    }
+                                    return response.text();
+                                })
+                                .then(text => {
+                                    if (text.includes('error')) {
+                                        errorDetails.textContent = text;
+                                    } else {
+                                        errorDetails.textContent = "Erreur de chargement du QR code";
+                                    }
+                                })
+                                .catch(error => {
+                                    errorDetails.textContent = `Détails: ${error.message}`;
+                                });
+                            
+                            errorDiv.style.display = 'block';
+                        }
+
+                        function reloadQrCode() {
+                            const img = document.querySelector('.qr-code');
+                            const errorDiv = document.getElementById('qr-error');
+                            const errorDetails = document.getElementById('error-details');
+                            const timestamp = new Date().getTime();
+                            
+                            img.src = '{{ path('commande_qrcode', {'id_commande': commande.idCommande}) }}?' + timestamp;
+                            img.style.display = 'block';
+                            errorDiv.style.display = 'none';
+                            errorDetails.textContent = '';
+                        }
+                        </script>
+
+                        <!-- Action Buttons -->
+                        <div class="text-center mb-4">
+                            <!-- PDF Download Button -->
+                            <a href="{{ path('facture_pdf', {'id_commande': commande.idCommande}) }}" class="btn btn-danger btn-lg me-3" target="_blank">
+                                <i class="fas fa-file-pdf"></i> Télécharger PDF
+                            </a>
+
+                            <!-- Send Invoice Button -->
+                            <a href="{{ path('facture_email', {'id_commande': commande.idCommande}) }}" class="btn btn-success btn-lg">
+                                <i class="fas fa-envelope"></i> Envoyer la facture par e-mail
+                            </a>
+                        </div>
+
+                        <!-- Back to Orders List -->
+                        <div class="text-center">
+                            <a href="{{ path('app_commande_index') }}" class="btn btn-outline-success btn-lg px-4 py-2">
+                                Retour à la liste des commandes
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

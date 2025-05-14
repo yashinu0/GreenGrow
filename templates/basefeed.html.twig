@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <!-- basic -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <!-- site metas -->
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    <link rel="icon" href="{{ asset('favicon.ico') }}">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" type="image/png" href="{{asset('images/logo.png')}}">
+    
+    {% block stylesheets %}
+        <!-- bootstrap css -->
+        <link rel="stylesheet" href="{{asset('css/bootstrap.min.css')}}">
+        <!-- style css -->
+        <link rel="stylesheet" href="{{asset('css/style.css')}}">
+        <!-- Responsive-->
+        <link rel="stylesheet" href="{{asset('css/responsive.css')}}">
+        <!-- Scrollbar Custom CSS -->
+        <link rel="stylesheet" href="{{asset('css/jquery.mCustomScrollbar.min.css')}}">
+        <!-- Tweaks for older IEs-->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+        <link rel="stylesheet" href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('fonts/font-awesome-4.7.0/css/font-awesome.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('vendor/animate/animate.css') }}">
+        <link rel="stylesheet" href="{{ asset('vendor/css-hamburgers/hamburgers.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('vendor/select2/select2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/util.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/main.css') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+        
+        <style>
+            /* Effet de flou */
+            .modal-backdrop.show {
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                opacity: 0.9 !important;
+            }
+
+            /* Animation de la modale */
+            .modal-content {
+                transform: scale(0.9);
+                transition: all 0.3s ease;
+            }
+
+            .modal.show .modal-content {
+                transform: scale(1);
+            }
+
+            /* Adaptation de l'interface existante */
+            .modal-dialog.modal-lg {
+                max-width: 900px;
+            }
+
+            .modal-body .limiter {
+                padding: 20px;
+            }
+
+            .modal-body .container-login100 {
+                min-height: auto;
+            }
+        </style>
+    {% endblock %}
+  </head>
+  <body class="main-layout">
+    {% if app.user %}
+        
+        </div>
+    {% endif %}
+    {% block body %}
+    <!-- loader  -->
+    <div class="loader_bg">        <div class="loader"><img src="images/loading.gif" alt="#" /></div> 
+    <!-- end loader -->
+    <!-- header -->
+    <header>
+      <!-- header inner -->
+      <div class="header">
+        <div class="container" style="height: 76px;">
+          <div class="row">
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col logo_section">
+              <div class="full">
+                <div class="center-desk">
+                  <div class="logo"> <a href="index.html"><img src="{{asset('images/logo.png')}}"
+
+                        alt="#" width="85" height="200"></a> </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9">
+              <div class="location_icon_bottum_tt">
+                <ul>
+                  <li><img src="{{asset('icon/email1.png')}}">GreenGrow@gmail.com</li>
+                  <li><img src="{{asset('icon/call1.png')}}">(+216) 25845846</li>
+                  <li>
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12"> <button
+
+                        class="send" data-toggle="modal" data-target="#loginModal" style="width: 120px; margin-left: 700px; margin-top: -100px; height: 60px;">
+                          Connexion</button>
+                  
+
+                    </div>
+                    
+                    
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 location_icon_bottum" style="margin-top: -68px; height: 69px;">
+              <div class="row"> 
+                <div class="col-md-8 ">
+                  <div class="menu-area">
+                    <div class="limit-box">
+                      <nav class="main-menu">
+                        <ul class="menu-area-main">
+                          <li class="active"> <a href="{{ path('app_user') }}">Home</a> </li>
+                          <li> <a href="{{ path('app_inscription') }}">Inscription</a> </li>
+                          <li><a href="{{ path('app_produitss') }}">sssss</a></li>
+                          <li><a href="#testimonial">Testimonial</a></li>
+                          <li><a href="{{ path('app_feed') }}">Contact Us</a></li>
+                        </ul>
+                      </nav>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                  <form class="search"> <input class="form-control" placeholder="Search"
+
+                      type="text"> <button><img src="{{asset('images/search_icon.png')}}"></button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end header inner --> </header>
+    <!-- end header -->
+    {% block section %} 
+{% endblock %}
+
+    <!-- end contact -->
+    <!-- footer -->
+    <!--  footer --> <footer>
+      <div class="footer top_layer ">
+        <div class="container">
+          <div class="row">
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+              <div class="address"> <a href="index.html"> <img src="{{asset('images/logo.png')}}"
+
+                    alt="logo" width="85" height="200"></a>
+                <p>Optimisez votre agriculture avec nos capteurs IoT
+                  intelligents</p>
+              </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+              <div class="address">
+                <h3>Liens rapides</h3>
+                <ul class="Links_footer">
+                  <li><img src="{{asset('icon/3.png')}}" alt="#"> <a href="#">Maintenance</a>
+                  </li>
+                  <li><img src="{{asset('icon/3.png')}}" alt="#"> <a href="#"> Join Us</a> </li>
+                  <li><img src="{{asset('icon/3.png')}}" alt="#"> <a href="#">Language Packs</a>
+                  </li>
+                  <li><img src="{{asset('icon/3.png')}}" alt="#"> <a href="#">LearnPress</a>
+                  </li>
+                  <li><img src="{{asset('icon/3.png')}}" alt="#"> <a href="#">Release Status</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+              <div class="address">
+                <h3>Subcribe email</h3>
+                <input class="form-control" placeholder="Your Email" name="Your Email"
+
+                  type="type"> <button class="submit-btn">Envoyer</button> </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+              <div class="address">
+                <h3>Contact Us</h3>
+                <ul class="loca">
+                  <li> <a href="{{ path('app_feed') }}""><img src="{{asset('icon/loc.png')}}" alt="#"></a>Ghazela
+                    <br>
+                    Ariana Tunis</li>
+                  <li> <a href="{{ path('app_feed') }}"><img src="{{asset('icon/email.png')}}" alt="#"></a>GreenGrow@gmail.com
+                    </li>
+                  <li> <a href="#"><img src="{{asset('icon/call.png')}}" alt="#"></a>+216
+                    25845846 </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="copyright">
+        <div class="container">
+          <p> 2025 All Rights Reserved. Design By<a href=""> Selim Gharbi</a></p>
+        </div>
+      </div>
+    </footer>
+    {% endblock %}
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" style="border-radius: 25px; background: #fff;">
+                <div class="modal-body p-0">
+                    <div class="limiter">
+                    <center>
+                                <div class="login100-pic js-tilt" data-tilt>
+                                    <img src="{{ asset('images/img-01.png') }}" alt="IMG">
+                                </div>
+
+                                <form class="login100-form validate-form" method="post" action="{{ path('app_login') }}">
+                                    <span class="login100-form-title">Connexion</span>
+
+                                   
+
+                                    <div class="wrap-input100 validate-input" data-validate="Email requis">
+                                        <input class="input100" type="email" placeholder="Email" name="email" required autofocus>
+                                        <span class="focus-input100"></span>
+                                        <span class="symbol-input100">
+                                            <i class="fa fa-envelope" aria-hidden="true"></i>
+                                        </span>
+                                    </div>
+
+                                    <div class="wrap-input100 validate-input" data-validate="Mot de passe requis">
+                                        <input class="input100" type="password" placeholder="Password" name="password" required>
+                                        <span class="focus-input100"></span>
+                                        <span class="symbol-input100">
+                                            <i class="fa fa-lock" aria-hidden="true"></i>
+                                        </span>
+                                    </div>
+
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                                    <div class="container-login100-form-btn">
+                                        <button class="login100-form-btn" type="submit">
+                                            Se connecter
+                                        </button>
+                                    </div>
+
+                                    <div class="text-center p-t-12">
+                                        <a class="txt2" href="#">
+                                            Mot de passe oublié ?
+                                        </a>
+                                    </div>
+
+                                    <div class="text-center p-t-136">
+                                        <a class="txt2" href="{{ path('app_inscription') }}">
+                                            Créer un compte
+                                            <i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% block javascripts %}
+        <!-- Javascript files-->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="{{ asset('vendor/bootstrap/js/popper.js') }}"></script>
+        <script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+        <script src="{{ asset('vendor/select2/select2.min.js') }}"></script>
+        <script src="{{ asset('vendor/tilt/tilt.jquery.min.js') }}"></script>
+        <script src="{{ asset('js/main.js') }}"></script>
+        <script src="{{asset('js/plugin.js')}}"></script>
+        <script src="{{asset('js/jquery.mCustomScrollbar.concat.min.js')}}"></script>
+        <script src="{{asset('js/custom.js')}}"></script>
+        <script src="{{asset('js/owl.carousel.js')}}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        
+        <script>
+            $(document).ready(function() {
+                // Initialisation de l'effet tilt
+                $('.js-tilt').tilt({
+                    scale: 1.1,
+                    reset: false
+                });
+
+                // Gestion des modales
+                $('#loginModal').on('hidden.bs.modal', function () {
+                    $(this).find('form').trigger('reset');
+                });
+
+                // Show modal if there are login errors
+                {% if app.flashes('login_error') %}
+                    $('#loginModal').modal('show');
+                {% endif %}
+
+                // Add/remove blur effect for modal
+                $('#loginModal').on('show.bs.modal', function () {
+                    $('body').addClass('modal-blur');
+                }).on('hidden.bs.modal', function () {
+                    $('body').removeClass('modal-blur');
+                });
+
+                // Fancybox initialization
+                $(".fancybox").fancybox({
+                    openEffect: "none",
+                    closeEffect: "none"
+                });
+
+                // Zoom effect
+                $(".zoom").hover(function() {
+                    $(this).addClass('transition');
+                }, function() {
+                    $(this).removeClass('transition');
+                });
+                
+                toastr.options = {
+                    "closeButton": true,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "timeOut": "5000"
+                };
+            });
+        </script>
+    {% endblock %}
+  </body>
+</html>

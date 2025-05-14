@@ -1,0 +1,49 @@
+security:
+    enable_authenticator_manager: true
+
+    password_hashers:
+        App\Entity\Utilisateur:
+            algorithm: auto
+
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\Utilisateur
+                property: email_user  # Assurez-vous que c'est bien "email_user"
+
+    firewalls:
+        main:
+            lazy: true
+            provider: app_user_provider
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                username_parameter: email_user
+                password_parameter: mot_de_passe_user
+            logout:
+                path: app_logout
+                target: app_login
+    access_control:
+        - { path: ^/, roles: PUBLIC_ACCESS }
+        - { path: ^/admin/feed, roles: ROLE_ADMIN }
+        - { path: ^/admin/reclamation, roles: ROLE_ADMIN }
+        - { path: ^/admin/reclamation, roles: ROLE_ADMIN }
+        - { path: ^/produit, roles: ROLE_ADMIN }
+        - { path: ^/utilisateur, roles: ROLE_ADMIN }
+        - { path: ^/categories, roles: ROLE_ADMIN }
+        - { path: ^/rendu, roles: ROLE_ADMIN }
+        - { path: ^/utilisateur/statistiques, roles: ROLE_ADMIN }
+        
+        
+        
+        
+
+
+        
+
+
+
+
+
+
+

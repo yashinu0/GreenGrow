@@ -1,0 +1,269 @@
+{% extends 'basefeed.html.twig' %}
+
+{% block title %}Assistant AI - Réclamation #{{ reclamation.id }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .chat-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .chat-header img {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+        }
+
+        .chat-title {
+            font-size: 1.5em;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            border-radius: 10px;
+            max-width: 80%;
+            position: relative;
+        }
+
+        .message.user {
+            margin-left: auto;
+            background: #007bff;
+            color: white;
+        }
+
+        .message.assistant {
+            margin-right: auto;
+            background: #e9ecef;
+            color: #2c3e50;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+
+        .chat-input {
+            flex-grow: 1;
+            padding: 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            resize: none;
+            font-size: 1rem;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        }
+
+        .send-button {
+            padding: 12px 25px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .send-button:hover {
+            background: #218838;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .send-button i {
+            font-size: 1.2em;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            color: #fff;
+            background: #6c757d;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .back-button:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .back-button i {
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 576px) {
+            .send-button span, 
+            .back-button span {
+                display: none;
+            }
+
+            .send-button, 
+            .back-button {
+                padding: 12px;
+            }
+
+            .send-button i,
+            .back-button i {
+                margin: 0;
+            }
+        }
+
+        /* Animation pour les nouveaux messages */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Scrollbar personnalisée */
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+{% include 'frontend/header.html.twig' %}
+            <div style="height: 60px;"></div>
+
+    <div class="container">
+        <div class="chat-container">
+            <div class="chat-header">
+                <img src="{{ asset('images/ai-assistant-logo.png') }}" alt="AI Assistant Logo">
+                <h2 class="chat-title">
+                    <i class="fa-solid fa-robot me-2"></i>
+                    Assistant AI - Réclamation #{{ reclamation.id }}
+                </h2>
+            </div>
+
+            <div class="chat-messages" id="chat-messages">
+                {% for message in messages %}
+                    <div class="message {% if message.isFromUser %}user{% else %}assistant{% endif %}">
+                        {{ message.content|nl2br }}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <form method="post" class="chat-input-container">
+                <textarea 
+                    name="message" 
+                    class="chat-input" 
+                    placeholder="Tapez votre message ici..." 
+                    rows="2"
+                    required></textarea>
+                <button type="submit" class="send-button" title="Envoyer le message">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Envoyer</span>
+                </button>
+            </form>
+
+            <div class="action-buttons mt-3">
+                <a href="{{ path('app_reclamation_show', {'id': reclamation.id}) }}" class="back-button">
+                    <i class="fa-solid fa-reply"></i>
+                    <span>Retour à la réclamation</span>
+                </a>
+            </div>
+        </div>
+    </div>
+                <div style="height: 40px;"></div>
+
+        {% include 'frontend/footer.html.twig' %}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Scroll to bottom of messages
+            const chatMessages = document.getElementById('chat-messages');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Auto-resize textarea
+            const textarea = document.querySelector('.chat-input');
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+
+            // Enter to send (Shift+Enter for new line)
+            textarea.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    this.form.submit();
+                }
+            });
+        });
+    </script>
+{% endblock %}

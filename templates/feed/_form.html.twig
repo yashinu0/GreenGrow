@@ -1,0 +1,33 @@
+{{ form_start(form) }}
+    <div class="form-group">
+        {{ form_label(form.name_feed, 'Name') }}
+        {{ form_widget(form.name_feed, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.name_feed) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.email_feed, 'Email') }}
+        {{ form_widget(form.email_feed, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.email_feed) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.commentaire_feed, 'Comment') }}
+        {{ form_widget(form.commentaire_feed, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.subject_feed) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.subject_feed, 'Subject') }}
+        {{ form_widget(form.subject_feed, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.commentaire_feed) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.date_feed, 'Date') }}
+        {{ form_widget(form.date_feed, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.date_feed) }}
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">{{ button_label|default('Save') }}</button>
+{{ form_end(form) }}

@@ -1,0 +1,108 @@
+{% extends 'backend/indexbackend.html.twig' %}
+
+{% block title %}New Utilisateur{% endblock %}
+
+{% block content %}
+
+
+    <h1 class="dynamic-title">Create new Utilisateur </h1>
+  
+     
+  <div style="margin-top: 50px; margin-right:100px; width: 100%;"    >
+    {{ include('utilisateur/_form.html.twig') }}
+  </div>
+            <button class="btn btn-back" onclick="window.location.href='{{ path('app_utilisateur_index') }}'">Retour à la liste</button>
+  <br><br><br><br><br>
+
+{% endblock %}
+
+{% block css %}
+{{ parent() }}
+
+<style>
+/* Changement du fond de la page */
+body {
+    font-family: 'Arial', sans-serif; /* Police générale de la page */
+}
+
+/* Style dynamique pour le titre */
+.dynamic-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    color: #d9534f; /* Couleur du titre */
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, #57b846, #0f6100);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+/* Animation d'apparition */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Style du bouton */
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: #57b846;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.btn a {
+    color: white;
+    text-decoration: none;
+}
+
+.btn:hover {
+    background: rgb(15, 97, 0);
+}
+
+/* Style des labels */
+label {
+    font-size: 1.2rem;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    margin-bottom: 0.5rem;
+    display: inline-block;
+}
+
+/* Style des zones de texte (input, textarea) */
+input[type="text"], input[type="email"], input[type="password"], textarea {
+    font-size: 1rem;
+    padding: 0.8rem;
+    width: 100%;
+    margin: 0.5rem 0 1rem 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #f9f9f9; /* Fond clair pour les champs */
+    color: #333;
+}
+
+/* Focus sur les champs de texte */
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, textarea:focus {
+    border-color: #57b846;
+    outline: none;
+    background-color: #e9ffe9; /* Fond clair lorsqu'un champ est sélectionné */
+}
+
+/* Style pour les champs de texte de type password, email, etc. */
+input[type="password"], input[type="email"] {
+    font-family: 'Arial', sans-serif;
+}
+</style>
+{% endblock %}

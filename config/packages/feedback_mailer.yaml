@@ -1,0 +1,5 @@
+services:
+    feedback.mailer.transport:
+        class: Symfony\Component\Mailer\Transport
+        factory: ['Symfony\Component\Mailer\Transport', 'fromDsn']
+        arguments: ['%env(MAILER_DSN1)%']

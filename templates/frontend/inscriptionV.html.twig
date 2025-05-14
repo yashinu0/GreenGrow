@@ -1,0 +1,127 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription Vendeur{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('fonts/font-awesome-4.7.0/css/font-awesome.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendor/animate/animate.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendor/css-hamburgers/hamburgers.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendor/select2/select2.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/util2.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/main2.css') }}">
+{% endblock %}
+
+{% block section %}
+    <div class="contact1">
+        <div class="container-contact1">
+            <div class="contact1-pic js-tilt" data-tilt>
+                <img src="{{ asset('images/img01.png') }}" alt="Illustration">
+            </div>
+
+            {{ form_start(form, {'attr': {'class': 'contact1-form validate-form'}}) }}
+
+                <span class="contact1-form-title">
+                    Rejoignez Notre Équipe
+                </span>
+
+                {# Affichage des erreurs globales du formulaire #}
+                {% if form.vars.errors|length > 0 %}
+                    <div class="alert alert-danger">
+                        {{ form_errors(form) }}
+                    </div>
+                {% endif %}
+
+                <div class="wrap-input1 validate-input" data-validate="Le prénom est requis">
+                    {{ form_widget(form.nom_user, {'attr': {'class': 'input1', 'placeholder': 'Prénom'}}) }}
+                    {{ form_errors(form.nom_user) }}
+                    <span class="shadow-input1"></span>
+                </div>
+
+                <div class="wrap-input1 validate-input" data-validate="Le nom est requis">
+                    {{ form_widget(form.prenom_user, {'attr': {'class': 'input1', 'placeholder': 'Nom'}}) }}
+                    {{ form_errors(form.prenom_user) }}
+                    <span class="shadow-input1"></span>
+                </div>
+
+                <div class="wrap-input1 validate-input" data-validate="Un e-mail valide est requis">
+                    {{ form_widget(form.email_user, {'attr': {'class': 'input1', 'placeholder': 'Adresse e-mail'}}) }}
+                    {{ form_errors(form.email_user) }}
+                    <span class="shadow-input1"></span>
+                </div>
+
+                <div class="wrap-input1 validate-input" data-validate="Le mot de passe est requis">
+                    {{ form_widget(form.mot_de_passe_user, {'attr': {'class': 'input1', 'placeholder': 'Mot de passe', 'id': 'password'}}) }}
+                    {{ form_errors(form.mot_de_passe_user) }}
+                    <span class="shadow-input1"></span>
+                </div>
+
+                <div class="wrap-input1 validate-input" data-validate="Confirmation du mot de passe requise">
+                    <input type="password" class="input1" placeholder="Confirmer le mot de passe" id="confirm_password">
+                    <span class="shadow-input1"></span>
+                </div>
+
+                <div class="wrap-input1 validate-input" data-validate="Numéro de téléphone requis">
+                    {{ form_widget(form.telephone_user, {'attr': {'class': 'input1', 'placeholder': 'Téléphone'}}) }}
+                    {{ form_errors(form.telephone_user) }}
+                    <span class="shadow-input1"></span>
+                </div>
+
+                <div class="wrap-input1 validate-input" data-validate="Code postal requis">
+                    {{ form_widget(form.code_postal_user, {'attr': {'class': 'input1', 'placeholder': 'Code postal'}}) }}
+                    {{ form_errors(form.code_postal_user) }}
+                    <span class="shadow-input1"></span>
+                </div>
+
+                <div class="wrap-input1 validate-input" data-validate="Ville requise">
+                    {{ form_widget(form.ville_user, {'attr': {'class': 'input1', 'placeholder': 'Ville'}}) }}
+                    {{ form_errors(form.ville_user) }}
+                    <span class="shadow-input1"></span>
+                </div>
+
+                <div class="wrap-input1 validate-input" data-validate="L'adresse est requise">
+                    {{ form_widget(form.adresse_user, {'attr': {'class': 'input1', 'placeholder': 'Adresse'}}) }}
+                    {{ form_errors(form.adresse_user) }}
+                    <span class="shadow-input1"></span>
+                </div>
+
+                <div class="container-contact1-form-btn">
+                    <button type="submit" class="contact1-form-btn" id="submitBtn">
+                        <span>
+                            Envoyer la candidature
+                            <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </span>
+                    </button>
+                </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('vendor/jquery/jquery-3.2.1.min.js') }}"></script>
+    <script src="{{ asset('vendor/bootstrap/js/popper.js') }}"></script>
+    <script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('vendor/select2/select2.min.js') }}"></script>
+    <script src="{{ asset('vendor/tilt/tilt.jquery.min.js') }}"></script>
+    <script src="{{ asset('js/main1.js') }}"></script>
+
+    <script>
+        $('.js-tilt').tilt({
+            scale: 1.1
+        });
+
+        document.getElementById('submitBtn').addEventListener('click', function(event) {
+            let password = document.getElementById('password').value;
+            let confirmPassword = document.getElementById('confirm_password').value;
+
+            if (password !== confirmPassword) {
+                alert("Les mots de passe ne correspondent pas !");
+                event.preventDefault();
+            }
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,10 @@
+{{ form_start(form) }}
+    {{ form_row(form.quantite}}
+    {{ form_row(form.nom_produit) }}
+    {{ form_row(form.description_produit) }}
+    {{ form_row(form.prix_produit) }}
+    {{ form_row(form.disponibilte_produit) }}
+    {{ form_row(form.image_produit) }}
+    {{ form_row(form.id_categories) }}
+    <button class="btn btn-primary">{{ button_label|default('Save') }}</button>
+{{ form_end(form) }}

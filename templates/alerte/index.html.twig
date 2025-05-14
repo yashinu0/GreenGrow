@@ -1,0 +1,153 @@
+{% extends 'backend/indexbackend.html.twig' %}
+
+{% block title %}Alerte{% endblock %}
+
+{% block css %}
+{{ parent() }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
+<link rel="stylesheet" href="{{ asset('css/mdb.min.css') }}" />
+
+<style>
+    .table {
+        border: 3px solid #dee2e6 !important;
+        font-size: 1.1rem;
+    }
+
+    .table th {
+        font-weight: 800 !important;
+        font-size: 1.2rem;
+        background-color: #f1f3f5 !important;
+        border-bottom: 4px solid #dee2e6 !important;
+        padding: 1.2rem !important;
+    }
+
+    .table td {
+        padding: 1.2rem !important;
+        border-width: 2px 0 !important;
+        vertical-align: middle !important;
+    }
+
+    .table tr:not(:last-child) td {
+        border-bottom: 2px solid #dee2e6 !important;
+    }
+
+    .card {
+        border: 3px solid #dee2e6 !important;
+        border-radius: 12px !important;
+        overflow: hidden;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f8f9fa !important;
+        transform: translateX(10px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .badge {
+        font-size: 1rem !important;
+        padding: 0.6em 1em !important;
+    }
+
+    .avatar-placeholder {
+        width: 45px;
+        height: 45px;
+        background-color: #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+        border-radius: 50%;
+    }
+
+    .btn1 {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background: #57b846;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    .btn1:hover {
+        background: #0f6100;
+        text-decoration: none;
+    }
+
+    .table-align-middle td, .table-align-middle th {
+        vertical-align: middle !important;
+    }
+
+    .action-btn {
+        display: inline-block;
+        padding: 0.5rem 0.8rem;
+        margin: 0.1rem;
+        border-radius: 10px;
+        font-size: 0.8rem;
+        text-decoration: none;
+        color: white;
+        background-color: #007bff;
+        transition: background-color 0.3s ease;
+    }
+
+    .action-btn:hover {
+        background-color: #0056b3;
+    }
+
+    .edit-btn {
+        background-color:rgb(6, 49, 149);
+    }
+
+    .edit-btn:hover {
+        background-color: rgb(6, 49, 149);
+    }
+
+    .show-btn {
+        background-color:rgb(9, 107, 120);
+    }
+
+    .show-btn:hover {
+        background-color: rgb(9, 107, 120);
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+    <h1>Alerte index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Niveau_urgence_alerte</th>
+                <th>Temps_limite_alerte</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for alerte in alertes %}
+            <tr>
+                <td>{{ alerte.id_alerte }}</td>
+                <td>{{ alerte.NiveauUrgenceAlerte }}</td>
+                <td>{{ alerte.tempsLimiteAlerte ? alerte.tempsLimiteAlerte|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_alerte_show', {'id': alerte.id_alerte}) }}" class="action-btn show-btn">Show</a>
+                    <a href="{{ path('app_alerte_edit', {'id': alerte.id_alerte}) }}" class="action-btn edit-btn">Edit</a>
+                    {{ include('alerte/_delete_form.html.twig') }}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">No records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_alerte_new') }}" class="btn1">Create New</a>
+{% endblock %}

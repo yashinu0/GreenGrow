@@ -1,0 +1,161 @@
+{% extends 'backend/indexbackend.html.twig' %}
+
+{% block title %}Edit Utilisateur{% endblock %}
+
+{% block content %}
+    <h1 class="dynamic-title">Modifier l'Utilisateur</h1>
+
+    <div class="return-container">
+        {{ include('utilisateur/_form.html.twig', {'button_label': 'Update'}) }}
+         </div>
+
+    <!-- Bouton Retour en bas et à gauche -->
+        <button class="btn btn-back" onclick="window.location.href='{{ path('app_utilisateur_index') }}'">Retour à la liste</button>
+  <br><br><br><br><br>
+
+{% endblock %}
+
+{% block css %}
+{{ parent() }}
+
+<style>
+/* Import de la police Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+/* Arrière-plan global */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Titre stylisé */
+.dynamic-title {
+    font-size: 2.2rem;
+    font-weight: 600;
+    text-align: center;
+    color: #1f2937;
+    letter-spacing: 1.5px;
+    padding: 20px 0;
+}
+
+/* Conteneur du formulaire */
+.form-container {
+    width: 100%;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Style des labels */
+label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    display: inline-block;
+}
+
+/* Style des champs de texte */
+input[type="text"], input[type="email"], input[type="password"], textarea {
+    font-size: 1rem;
+    padding: 0.8rem;
+    width: 100%;
+    margin: 0.5rem 0 1rem 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    background-color: #f9fafb;
+    color: #333;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Effet au focus */
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, textarea:focus {
+    border-color: #6366f1;
+    outline: none;
+    background-color: #eef2ff;
+}
+
+/* Conteneur des boutons Update + Delete */
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Alignement horizontal de Update + Delete */
+.btn-group {
+    display: flex;
+    gap: 10px;
+}
+
+/* Style général des boutons */
+.btn {
+    display: inline-block;
+    padding: 0.8rem 1.6rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-weight: bold;
+    border: none;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Style du bouton Update */
+form input[type="submit"] {
+    background: #f59e0b;
+    color: white;
+    padding: 0.8rem 1.6rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+form input[type="submit"]:hover {
+    background: #b45309;
+}
+
+/* Style du bouton Delete */
+form button {
+    background: #dc3545;
+    color: white;
+    padding: 0.8rem 1.6rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+form button:hover {
+    background: #a71d2a;
+}
+
+/* Bouton Retour en bas et à gauche */
+.return-container {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 40px;
+    padding-left: 20px;
+}
+
+.btn-back {
+    background: #1e40af;
+    color: white;
+}
+
+.btn-back:hover {
+    background: #172554;
+}
+</style>
+{% endblock %}

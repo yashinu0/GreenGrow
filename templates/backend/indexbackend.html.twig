@@ -1,0 +1,520 @@
+<html lang="en">
+    <head>
+      <!-- Required meta tags -->
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>{% block title %}GreenGrow{% endblock %}</title>
+      <!-- plugins:css -->
+      {% block css %}
+      
+
+
+      <link rel="stylesheet" href="{{asset('vendor/mdi/css/materialdesignicons.min.css')}}">
+      <link rel="stylesheet" href="{{asset('vendor/flag-icon-css/css/flag-icons.min.css')}}">
+      <link rel="stylesheet" href="{{asset('vendor/css/vendor.bundle.base.css')}}">
+      <!-- Replace existing Bootstrap links with these -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+      <!-- Remplacez ces lignes -->
+  <link rel="stylesheet" href="{{asset('vendor/mdi/css/materialdesignicons.min.css')}}">
+  <link rel="stylesheet" href="{{asset('vendor/font-awesome/css/font-awesome.min.css')}}">
+
+  <!-- Par des CDNs -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+      <!-- endinject -->
+      <!-- Plugin css for this page -->
+      
+      <link rel="stylesheet" href="{{asset('vendor/font-awesome/css/font-awesome.min.css')}}" />
+      <link rel="stylesheet" href="{{asset('vendor/bootstrap-datepicker/bootstrap-datepicker.min.css')}}">
+      <!-- End plugin css for this page -->
+      <!-- inject:css -->
+      <!-- endinject -->
+      <!-- Layout styles -->
+      <link rel="stylesheet" href="{{asset('css/vertical-light-layout/style.css')}}">
+      
+    {% endblock %}
+    <link rel="shortcut icon" href="{{asset('images/logo.jpg')}}" />
+  </head>
+  {% block body %}
+  <body>
+    <div class="container-scroller">
+      
+       
+      
+      <!-- partial:partials/_navbar.html -->
+    <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+  <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+    <a class="navbar-brand brand-logo" href="index.html"><img src="{{asset('images/logo.png')}}" alt="logo" style="width:97px; height:79px;" /></a>
+  </div>
+  <div class="navbar-menu-wrapper d-flex align-items-stretch">
+    <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+      <span class="mdi mdi-menu"></span>
+    </button>
+    <div class="search-field d-none d-xl-block">
+      <form class="d-flex align-items-center h-100" action="#">
+        <div class="input-group">
+          <div class="input-group-prepend bg-transparent">
+            <i class="input-group-text border-0 mdi mdi-magnify"></i>
+          </div>
+          <input type="text" class="form-control bg-transparent border-0" placeholder="Search products">
+        </div>
+      </form>
+    </div>
+    <ul class="navbar-nav navbar-nav-right">
+      <li class="nav-item sidebar-user-actions">
+        <div class="sidebar-user-menu">
+          <a href="{{ path('app_logout') }}" class="nav-link"><i class="mdi mdi-logout menu-icon"></i>
+            <span class="menu-title">Log Out</span></a>
+        </div>
+      </li>
+    </ul>
+    <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+      <span class="mdi mdi-menu"></span>
+    </button>
+  </div>
+</nav>
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+              <!-- partial:partials/_sidebar.html -->
+              <nav class="sidebar sidebar-offcanvas" id="sidebar">
+                <ul class="nav">
+                  <li class="nav-item nav-category">Main</li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ path('backvues') }}">
+                      <span class="icon-bg"><i class="mdi mdi-cube menu-icon"></i></span>
+                      <span class="menu-title">Dashboard</span>
+                    </a>
+                  </li>
+                  <li class="nav-item nav-category">Features</li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_utilisateur_index') }}">
+                      <span class="icon-bg"><i class="mdi mdi-account menu-icon"></i></span>
+                      <span class="menu-title">User</span>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#Contact-menu" aria-expanded="false" aria-controls="Contact-menu">
+                      <span class="icon-bg"><i class="mdi mdi-comment-alert menu-icon"></i></span>
+                      <span class="menu-title">Contact</span>
+                      <i class="menu-arrow"></i>
+                    </a>
+                    <div class="collapse" id="Contact-menu">
+                      <ul class="nav flex-column sub-menu">
+                        <li class="nav-item">
+                          <a class="nav-link" href="{{ path('admin_feed_list') }}">Feedbacks</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="{{ path('admin_reclamation_index') }}">Reclamations</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">
+                      <span class="icon-bg"><i class="mdi mdi-cart menu-icon"></i></span>
+                      <span class="menu-title">Commandes</span>
+                    </a>
+                  </li>
+               
+ <li class="nav-item">
+  <a class="nav-link" data-bs-toggle="collapse" href="#Produit-menu" aria-expanded="false" aria-controls="Produit-menu">
+                        <span class="icon-bg"><i class="mdi mdi-package-variant menu-icon"></i></span>
+
+    <span class="menu-title">Produit</span>
+    <i class="menu-arrow"></i>
+  </a>
+  <div class="collapse" id="Produit-menu">
+    <ul class="nav flex-column sub-menu">
+      <li class="nav-item">
+        <a class="nav-link" href="{{ path('app_produit_index') }}">Produit</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ path('app_categories_index') }}">Categories</a>
+      </li>
+    </ul>
+  </div>
+</li>
+                  <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#supervision-menu" aria-expanded="false" aria-controls="supervision-menu">
+    <span class="icon-bg"><i class="mdi mdi-monitor-dashboard menu-icon"></i></span>
+    <span class="menu-title">Supervision</span>
+    <i class="menu-arrow"></i>
+  </a>
+  <div class="collapse" id="supervision-menu">
+    <ul class="nav flex-column sub-menu">
+      <li class="nav-item">
+        <a class="nav-link" href="{{ path('app_rendu_index') }}">Rendu</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ path('app_alerte_index') }}">Alert</a>
+      </li>
+    </ul>
+  </div>
+</li>
+                </ul>
+              <ul class="nav">
+                <li class="nav-item nav-category">Data Representation</li>
+              
+              <!-- Charts Section -->
+              <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="collapse" href="#charts" aria-expanded="false" aria-controls="charts">
+                  <span class="icon-bg"><i class="mdi mdi-chart-areaspline menu-icon"></i></span>
+                  <span class="menu-title">Charts</span>
+                </a>
+                <div class="collapse" id="charts">
+                  <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                      <a class="nav-link" href="{{ path('app_utilisateur_statistiques') }}">
+                        <i class="mdi mdi-chart-bar me-2"></i>
+                        Chart.js
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="">
+                        <i class="mdi mdi-chart-line me-2"></i>
+                        ApexCharts
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+              
+              <!-- Tables Section -->
+              <li class="nav-item">
+                <a class="nav-link collapsed" data-bs-toggle="collapse" href="#tables">
+                  <span class="icon-bg"><i class="mdi mdi-table-large menu-icon"></i></span>
+                  <span class="menu-title">Tables</span>
+                </a>
+                <div class="collapse" id="tables">
+                  <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                      <a class="nav-link" href="basic-table.html">
+                        <i class="mdi mdi-grid me-2"></i>
+                        Basic Table
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="data-table.html">
+                        <i class="mdi mdi-table-edit me-2"></i>
+                        Data Table
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+              </ul>
+      </nav>
+        <!-- partial -->
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <!-- ecrirce ici -->
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% block content %}
+<!-- content-wrapper starts -->
+<div class="content-wrapper">
+    <div class="row">
+        <div class="col-md-12 grid-margin">
+            <div class="row">
+                <div class="col-12 col-xl-8 mb-4">
+                      <h3 class="font-weight-bold mb-0">🌱 Smart Farming Dashboard</h3>
+    <span class="badge badge-success" style="margin-top:-30px; margin-left:850px">Connecté</span>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row">
+        <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+            <div class="card bg-gradient-primary">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-white">SURFACE CULTIVÉE</h6>
+                            <h2 class="text-white font-weight-bold">45 ha</h2>
+                        </div>
+                        <i class="mdi mdi-map-marker-radius icon-lg text-white"></i>
+                    </div>
+                    <div class="progress progress-sm mt-3">
+                        <div class="progress-bar bg-white" style="width: 75%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+            <div class="card bg-gradient-danger">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-white">CAPTEURS ACTIFS</h6>
+                            <h2 class="text-white font-weight-bold">128/135</h2>
+                        </div>
+                        <i class="mdi mdi-chip icon-lg text-white"></i>
+                    </div>
+                    <small class="text-white">7 capteurs en maintenance</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+            <div class="card bg-gradient-warning">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-white">PRÉVISION RÉCOLTE</h6>
+                            <h2 class="text-white font-weight-bold">82%</h2>
+                        </div>
+                        <i class="mdi mdi-weather-cloudy icon-lg text-white"></i>
+                    </div>
+                    <small class="text-white">Conditions optimales</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+            <div class="card bg-gradient-success">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-white">CONSO. EAU</h6>
+                            <h2 class="text-white font-weight-bold">245 m³</h2>
+                        </div>
+                        <i class="mdi mdi-water-pump icon-lg text-white"></i>
+                    </div>
+                    <div class="progress progress-sm mt-3">
+                        <div class="progress-bar bg-white" style="width: 45%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+        <div class="col-md-8 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Environmental Monitoring</h4>
+                    <center>
+                    <img src="{{asset('images/back.png')}}" style="width:80%; height:70%;" alt="environment chart">
+                  </center>
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Field Map</h4>
+                    <div class="farm-map">
+                        <img src="{{asset('images/map.jpg')}}" class="img-fluid rounded" alt="field map">
+                        
+                        <br><br>
+                        <div class="map-overlay">
+                            <span class="badge badge-success">Zone A: Optimal</span>
+                            <br><br>
+                            <span class="badge badge-warning">Zone B: Needs Water</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alerts and Quick Actions -->
+    <div class="row">
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Recent Alerts</h4>
+                    <div class="alert-list">
+                        <div class="alert alert-danger d-flex">
+                            <i class="mdi mdi-alert-circle-outline"></i>
+                            <div class="ml-3">
+                                <p class="mb-0">High temperature detected in Greenhouse 2</p>
+                                <small>2 hours ago</small>
+                            </div>
+                        </div>
+                        <div class="alert alert-warning d-flex">
+                            <i class="mdi mdi-water-off"></i>
+                            <div class="ml-3">
+                                <p class="mb-0">Low moisture level in Field C</p>
+                                <small>5 hours ago</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Quick Actions</h4>
+                    <div class="row quick-actions">
+                        <div class="col-6 text-center mb-4">
+                            <button class="btn btn-lg btn-outline-primary rounded-circle">
+                                <i class="mdi mdi-sprout"></i>
+                            </button>
+                            <p class="mt-2 mb-0">Start Irrigation</p>
+                        </div>
+                        <div class="col-6 text-center mb-4">
+                            <button class="btn btn-lg btn-outline-success rounded-circle">
+                                <i class="mdi mdi-weather-night"></i>
+                            </button>
+                            <p class="mt-2 mb-0">Light Control</p>
+                        </div>
+                        <div class="col-6 text-center">
+                            <button class="btn btn-lg btn-outline-info rounded-circle">
+                                <i class="mdi mdi-chart-areaspline"></i>
+                            </button>
+                            <p class="mt-2 mb-0">Generate Report</p>
+                        </div>
+                        <div class="col-6 text-center">
+                            <button class="btn btn-lg btn-outline-warning rounded-circle">
+                                <i class="mdi mdi-robot"></i>
+                            </button>
+                            <p class="mt-2 mb-0">Drone Control</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Crop Health Insights -->
+    <div class="row">
+        <div class="col-md-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Crop Health Analysis</h4>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="progress progress-md">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 85%"></div>
+                            </div>
+                            <p class="mt-2 mb-0">Overall Health Score: 85%</p>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="health-metrics">
+                                <span class="metric-item">
+                                    <i class="mdi mdi-thermometer text-danger"></i>
+                                    Temp: 28°C
+                                </span>
+                                <span class="metric-item">
+                                    <i class="mdi mdi-water-percent text-info"></i>
+                                    Humidity: 65%
+                                </span>
+                                <span class="metric-item">
+                                    <i class="mdi mdi-nature text-success"></i>
+                                    Soil Moisture: 42%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- content-wrapper ends -->
+ {% endblock %}
+
+          </div>
+          </div>
+          <!-- content-wrapper ends -->
+          <!-- partial:partials/_footer.html -->
+          
+          <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    {% block js %}
+    <script src="{{asset('vendor/js/vendor.bundle.base.js')}}"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <script src="{{asset('vendor/chart.js/chart.umd.js')}}"></script>
+    <script src="{{asset('vendor/jquery-circle-progress/js/circle-progress.min.js')}}"></script>
+    <script src="{{asset('js/jquery.cookie.js')}}"></script>
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="{{asset('js/off-canvas.js')}}"></script>
+    <script src="{{asset('js/hoverable-collapse.js')}}"></script>
+    <script src="{{asset('js/misc.js')}}"></script>
+    <script src="{{asset('js/settings.js')}}"></script>
+    <script src="{{asset('js/todolist.js')}}"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page -->
+    <script src="{{asset('js/dashboard.js')}}"></script>
+    <!-- Material Design Icons CDN -->
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<!-- ApexCharts JS -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <!-- End custom js for this page -->
+    
+    {% endblock %}
+</html>
+  {% endblock %}

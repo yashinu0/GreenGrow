@@ -1,0 +1,545 @@
+{% extends 'backend/indexbackend.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
+    <link rel="stylesheet" href="{{ asset('css/mdb.min.css') }}" />
+    <style>
+        .conversation-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        .message-container {
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+        .message-card {
+            max-width: 80%;
+            border-radius: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .user-message {
+            align-items: flex-start;
+        }
+        .admin-message {
+            align-items: flex-end;
+        }
+        .message-time {
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+        .info-card {
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+        .info-card .card-header {
+            border-radius: 10px 10px 0 0;
+            background-color: #f8f9fa;
+        }
+        .info-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .info-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        .info-list li:last-child {
+            border-bottom: none;
+        }
+        .btn-custom {
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .btn-outline-primary {
+            color: #28a745;
+            border-color: #28a745;
+            background-color: white;
+        }
+        .btn-outline-primary:hover {
+            color: #28a745;
+            background-color: white;
+            border-color: #28a745;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 10px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .message.user {
+            background: #28a745;
+            color: white;
+            margin-left: auto;
+        }
+
+        .message.bot {
+            background: #e9ecef;
+            color: #212529;
+        }
+
+        .error-message {
+            color: #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            display: none;
+        }
+        
+        .error-message.rate-limit {
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+            color: #856404;
+        }
+        
+        .chat-history {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            background: #f8f9fa;
+        }
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .message.user {
+            background: #e3f2fd;
+            margin-left: 20px;
+        }
+        .message.assistant {
+            background: #f5f5f5;
+            margin-right: 20px;
+        }
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .message-content {
+            white-space: pre-wrap;
+        }
+        
+        .chat-history {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            background: #f8f9fa;
+            margin-bottom: 20px;
+        }
+        .chat-message {
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+        .user-message {
+            background-color: #e3f2fd;
+            margin-left: auto;
+            margin-right: 20px;
+        }
+        .ai-message {
+            background-color: #fff;
+            margin-left: 20px;
+            border: 1px solid #e0e0e0;
+        }
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .message-content {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .text-muted {
+            color: #6c757d;
+            font-size: 0.875em;
+        }
+    </style>
+{% endblock %}
+
+{% block title %}Réclamation #{{ reclamation.id }}{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h2">Détails de la réclamation #{{ reclamation.id }}</h1>
+            <div>
+                <a href="{{ path('app_reclamation_show', {'id': reclamation.id}) }}" class="btn btn-outline-primary btn-custom me-2">
+                    <i class="fas fa-eye"></i>
+                    <span>Vue Client</span>
+                </a>
+                <a href="{{ path('admin_reclamation_index') }}" class="btn btn-outline-secondary btn-custom">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Retour à la liste</span>
+                </a>
+            </div>
+        </div>
+        
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+        
+        <div class="row">
+            <div class="col-md-4">
+                {# Informations Client #}
+                <div class="card info-card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-user me-2"></i>Informations Client
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="info-list">
+                            <li>
+                                <strong>ID Client:</strong> 
+                                {% if reclamation.utilisateur %}
+                                    #{{ reclamation.utilisateur.idUser }}
+                                {% else %}
+                                    Non assigné
+                                {% endif %}
+                            </li>
+                            <li>
+                                <strong>Nom:</strong> 
+                                {% if reclamation.utilisateur %}
+                                    {{ reclamation.utilisateur.nomUser }}
+                                {% else %}
+                                    Non assigné
+                                {% endif %}
+                            </li>
+                            <li>
+                                <strong>Email:</strong> 
+                                {% if reclamation.utilisateur %}
+                                    {{ reclamation.utilisateur.emailUser }}
+                                {% else %}
+                                    Non assigné
+                                {% endif %}
+                            </li>
+                            <li>
+                                <strong>Téléphone:</strong> 
+                                {% if reclamation.utilisateur %}
+                                    {{ reclamation.utilisateur.telephoneUser }}
+                                {% else %}
+                                    Non disponible
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                {# Informations Produit #}
+                <div class="card info-card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-box me-2"></i>Informations Produit
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="info-list">
+                            <li>
+                                <strong>ID Produit:</strong> 
+                                {% if reclamation.produit %}
+                                    #{{ reclamation.produit.id }}
+                                {% else %}
+                                    Non assigné
+                                {% endif %}
+                            </li>
+                            <li>
+                                <strong>Nom:</strong> 
+                                {% if reclamation.produit %}
+                                    {{ reclamation.produit.nomProduit }}
+                                {% else %}
+                                    Non assigné
+                                {% endif %}
+                            </li>
+                            <li>
+                                <strong>Prix:</strong> 
+                                {% if reclamation.produit %}
+                                    {{ reclamation.produit.prixProduit }}
+                                {% else %}
+                                    Non disponible
+                                {% endif %}
+                            </li>
+                            <li>
+                                <strong>Disponibilité:</strong> 
+                                {% if reclamation.produit %}
+                                    {{ reclamation.produit.disponibilteProduit ? 'En stock' : 'Hors stock' }}
+                                {% else %}
+                                    Non disponible
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                {# Informations Réclamation #}
+                <div class="card info-card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-info-circle me-2"></i>Détails Réclamation
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="info-list">
+                            <li>
+                                <strong>Date:</strong> {{ reclamation.getDateRec|date('d/m/Y H:i') }}
+                            </li>
+                            <li>
+                                <strong>Type:</strong>
+                                {% set desc = reclamation.descriptionRec|lower %}
+                                {% if 'défectueux' in desc %}
+                                    <span class="badge bg-danger">Produit défectueux</span>
+                                {% elseif 'livraison' in desc %}
+                                    <span class="badge bg-warning">Problème de livraison</span>
+                                {% elseif 'non conforme' in desc %}
+                                    <span class="badge bg-info">Produit non conforme</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ reclamation.descriptionRec }}</span>
+                                {% endif %}
+                            </li>
+                            <li>
+                                {{ form_start(status_form) }}
+                                {{ form_row(status_form.statutRec, {
+                                    'attr': {'class': 'form-select'},
+                                    'label': 'Modifier le statut'
+                                }) }}
+                                <button type="submit" class="btn text-white" style="background-color: #28a745; border-color: #28a745;">
+                                    <i class="fas fa-save"></i> Mettre à jour
+                                </button>
+                                {{ form_end(status_form) }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-comments me-2"></i>Conversation Chatbot
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% if reclamation.chatMessages is not empty %}
+                            <div class="chat-history">
+                                {% for chatMessage in reclamation.chatMessages|sort((a, b) => a.createdAt <=> b.createdAt) %}
+                                    {% if chatMessage.message %}
+                                        <div class="chat-message user-message">
+                                            <div class="message-header">
+                                                <strong>Client</strong>
+                                                <small class="text-muted">{{ chatMessage.createdAt|date('d/m/Y H:i') }}</small>
+                                            </div>
+                                            <div class="message-content">
+                                                {{ chatMessage.message|nl2br }}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    {% if chatMessage.response %}
+                                        <div class="chat-message ai-message">
+                                            <div class="message-header">
+                                                <strong>Assistant AI</strong>
+                                                <small class="text-muted">{{ chatMessage.createdAt|date('d/m/Y H:i') }}</small>
+                                            </div>
+                                            <div class="message-content">
+                                                {{ chatMessage.response|nl2br }}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info">
+                                Aucune conversation avec l'assistant AI n'a été enregistrée pour cette réclamation.
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {# Messages section #}
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-envelope me-2"></i>Messages
+                        </h5>
+                    </div>
+                    <div class="card-body conversation-container">
+                        {% for message in reclamation.messages|sort((a, b) => a.sentAt <=> b.sentAt) %}
+                            <div class="message-container {% if message.isFromAdmin %}admin-message{% else %}user-message{% endif %}">
+                                <div class="message-card card {% if message.isFromAdmin %}text-white{% else %}bg-light text-dark{% endif %}" {% if message.isFromAdmin %}style="background-color: #28a745;"{% endif %}>
+                                    <div class="card-body">
+                                        <p class="card-text">{{ message.content|nl2br }}</p>
+                                        <small class="message-time {% if message.isFromAdmin %}text-white-50{% else %}text-muted{% endif %}">
+                                            {{ message.sentAt|date('d/m/Y H:i') }} - 
+                                            {% if message.isFromAdmin %}
+                                                Admin
+                                            {% else %}
+                                                Client
+                                            {% endif %}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {% if reclamation.statutRec != 'Fermé' %}
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Répondre</h5>
+                        </div>
+                        <div class="card-body">
+                            {{ form_start(message_form) }}
+                            {{ form_row(message_form.content, {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'rows': 3,
+                                    'placeholder': 'Votre réponse...'
+                                }
+                            }) }}
+                            <button type="submit" class="btn text-white" style="background-color: #28a745; border-color: #28a745;">
+                                <i class="fas fa-paper-plane"></i> Envoyer
+                            </button>
+                            {{ form_end(message_form) }}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info mt-4">
+                        <i class="fas fa-lock me-2"></i>Cette réclamation est clôturée.
+                    </div>
+                {% endif %}
+                        
+                        <div class="chat-messages" id="chatMessages" style="height: 300px; overflow-y: auto;">
+                            <!-- Les messages seront chargés ici dynamiquement -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Scroll to bottom of conversation on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            var container = document.querySelector('.conversation-container');
+            container.scrollTop = container.scrollHeight;
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Chat initialization started');
+            
+            const reclamationId = {{ reclamation.id }};
+            const chatMessages = document.getElementById('chatMessages');
+            const errorMessage = document.getElementById('errorMessage');
+
+            function showError(message, details = '') {
+                console.log('Showing error:', message, details);
+                let errorText = `<strong>${message}</strong>`;
+                if (details) {
+                    errorText += `<small>${details}</small>`;
+                }
+                
+                errorMessage.classList.remove('rate-limit');
+                if (message.includes('utilisation intensive')) {
+                    errorMessage.classList.add('rate-limit');
+                }
+                
+                errorMessage.innerHTML = errorText;
+                errorMessage.style.display = 'block';
+                setTimeout(() => errorMessage.style.display = 'none', 15000);
+            }
+
+            function loadChatHistory() {
+                console.log('Loading chat history');
+                fetch(`/chatbot/history/${reclamationId}`)
+                    .then(response => response.json())
+                    .then(history => {
+                        console.log('Chat history loaded:', history);
+                        chatMessages.innerHTML = '';
+                        
+                        if (history && Array.isArray(history)) {
+                            history.forEach(item => {
+                                if (item.message) {
+                                    appendMessage(item.message, 'user', item.createdAt);
+                                }
+                                if (item.response) {
+                                    appendMessage(item.response, 'bot', item.createdAt);
+                                }
+                            });
+                        }
+                        
+                        scrollToBottom();
+                    })
+                    .catch(error => {
+                        console.error('Error loading chat history:', error);
+                        showError('Erreur lors du chargement de l\'historique des messages');
+                    });
+            }
+
+            function appendMessage(content, type, timestamp) {
+                if (!content) return;
+                console.log('Appending message:', { content, type, timestamp });
+                
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${type}`;
+                messageDiv.innerHTML = `
+                    ${content}
+                    <div class="message-time">${formatTimestamp(timestamp)}</div>
+                `;
+                chatMessages.appendChild(messageDiv);
+                scrollToBottom();
+            }
+
+            function formatTimestamp(timestamp) {
+                if (!timestamp) return '';
+                try {
+                    return new Date(timestamp).toLocaleTimeString();
+                } catch (e) {
+                    console.error('Error formatting timestamp:', e);
+                    return '';
+                }
+            }
+
+            function scrollToBottom() {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            // Load initial chat history
+            loadChatHistory();
+        });
+    </script>
+                <div style="height: 50px;"></div>
+
+{% endblock %}

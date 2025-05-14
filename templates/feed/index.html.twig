@@ -1,0 +1,521 @@
+{% extends 'basefeed.html.twig' %}
+
+{% block title %}Contactez-nous{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+    .contact-section {
+        padding: 80px 0;
+        background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('{{ asset('images/background.jpg') }}') center/cover;
+        position: relative;
+    }
+    
+    .contact-title {
+        color: #006400;
+        font-size: 2.5em;
+        font-weight: 700;
+        margin-bottom: 2.5rem;
+        text-align: center;
+        position: relative;
+    }
+    
+    .contact-title:after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 4px;
+        background: #006400;
+        margin: 15px auto;
+        border-radius: 2px;
+    }
+
+    .logo-section {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .logo-section img {
+        max-width: 150px;
+        margin: 0 20px;
+        transition: transform 0.3s ease;
+    }
+
+    .logo-section img:hover {
+        transform: scale(1.1);
+    }
+    
+    .contact-subtitle {
+        text-align: center;
+        color: #666;
+        font-size: 1.2em;
+        margin-bottom: 3rem;
+        line-height: 1.6;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .contact-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        border: none;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .contact-card:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(to right, #006400, #008000);
+    }
+    
+    .form-label {
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 0.8rem;
+        font-size: 1.1em;
+        letter-spacing: 0.5px;
+    }
+    
+    .form-control {
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 12px;
+        transition: all 0.3s ease;
+        margin-bottom: 1.2rem;
+    }
+    
+    .form-control:focus {
+        border-color: #006400;
+        box-shadow: 0 0 0 0.2rem rgba(0, 100, 0, 0.1);
+    }
+    
+    .btn-submit {
+        background: #006400;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 25px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    .btn-submit:hover {
+        background: #004d00;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 100, 0, 0.2);
+    }
+    
+    .contact-info {
+        background: #006400;
+        color: white;
+        border-radius: 15px;
+        padding: 2.5rem;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .contact-info:before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+    
+    .contact-info h3 {
+        color: white;
+        margin-bottom: 2rem;
+        font-weight: 600;
+        font-size: 1.5em;
+        position: relative;
+        padding-left: 45px;
+    }
+    
+    .contact-info h3:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 35px;
+        height: 35px;
+        background: url('{{ asset('icon/contact-icon.png') }}') center/contain no-repeat;
+    }
+    
+    .contact-info-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+        position: relative;
+        padding-left: 15px;
+    }
+    
+    .contact-info-item:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 5px;
+        height: 5px;
+        background: white;
+        border-radius: 50%;
+    }
+    
+    .contact-info-text {
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+    
+    .alert {
+        border-radius: 10px;
+        border: none;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        background: white;
+    }
+    
+    .alert i {
+        margin-right: 1rem;
+        font-size: 1.2rem;
+    }
+    
+    .map-container {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-top: 4rem;
+        position: relative;
+    }
+    
+    .map-container:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(to right, #006400, #008000);
+        z-index: 1;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+    {% include 'frontend/header.html.twig' %}
+    
+    <div style="height: 10px;"></div>
+
+    <section class="contact-section">
+        <div class="container">
+            <div class="logo-section">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo Principal" title="GreenGrow">
+            </div>
+
+            <h1 class="contact-title">Contactez-nous</h1>
+            <p class="contact-subtitle">
+                Nous sommes là pour vous aider ! N'hésitez pas à nous contacter pour toute question, suggestion ou préoccupation. 
+                Notre équipe s'engage à vous répondre dans les plus brefs délais.
+            </p>
+            
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('warning') %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('danger') %}
+                <div class="alert alert-danger">
+                    <i class="fas fa-times-circle"></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('info') %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="contact-card">
+                        {{ form_start(form, {'attr': {'class': 'needs-validation'}}) }}
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    {{ form_label(form.name_feed, 'Votre Nom', {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.name_feed, {
+                                        'attr': {
+                                            'class': 'form-control',
+                                            'placeholder': 'Entrez votre nom complet'
+                                        }
+                                    }) }}
+                                    {{ form_errors(form.name_feed) }}
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    {{ form_label(form.email_feed, 'Votre Email', {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.email_feed, {
+                                        'attr': {
+                                            'class': 'form-control',
+                                            'placeholder': 'exemple@email.com'
+                                        }
+                                    }) }}
+                                    {{ form_errors(form.email_feed) }}
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                {{ form_label(form.subject_feed, 'Sujet du Message', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.subject_feed, {
+                                    'attr': {
+                                        'class': 'form-control',
+                                        'placeholder': 'Quel est le sujet de votre message ?'
+                                    }
+                                }) }}
+                                {{ form_errors(form.subject_feed) }}
+                            </div>
+
+                            <div class="mb-4">
+                                {{ form_label(form.commentaire_feed, 'Votre Message', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.commentaire_feed, {
+                                    'attr': {
+                                        'class': 'form-control',
+                                        'rows': '5',
+                                        'placeholder': 'Décrivez votre message en détail...',
+                                        'required': 'required',
+                                        'minlength': '10',
+                                        'maxlength': '1000'
+                                    }
+                                }) }}
+                                {{ form_errors(form.commentaire_feed) }}
+                                <div class="form-text mt-1">
+                                    <span id="charCount">1000</span> caractères restants
+                                </div>
+                            </div>
+
+                            {{ form_row(form._token) }}
+
+                            <div class="mb-4">
+                                {{ form_widget(form.captcha) }}
+                                {{ form_errors(form.captcha) }}
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-submit">
+                                    <i class="fas fa-paper-plane"></i>
+                                    Envoyer le message
+                                </button>
+                            </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="contact-info">
+                        <h3>Nos Coordonnées</h3>
+
+                        <div class="contact-info-item">
+                            <i class="fas fa-map-marker-alt fa-2x" style="color: white; margin-right: 15px;"></i>
+                            <div class="contact-info-text">
+                                Ghazela<br>
+                                Ariana Tunis
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <i class="fas fa-phone-alt fa-2x" style="color: white; margin-right: 15px;"></i>
+                            <div class="contact-info-text">
+                                +216 25845846
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <i class="fas fa-envelope fa-2x" style="color: white; margin-right: 15px;"></i>
+                            <div class="contact-info-text">
+                                GreenGrow@gmail.com
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <i class="fas fa-clock fa-2x" style="color: white; margin-right: 15px;"></i>
+                            <div class="contact-info-text">
+                                Lun - Ven: 9:00 - 18:00<br>
+                                Sam: 9:00 - 14:00
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="map-container">
+                <iframe 
+                    style="width: 100%; height: 400px;" 
+                    src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d6380.974476602914!2d10.1865571!3d36.9026132!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12e2cbb73f78b917%3A0xfa77a5668dcfbd64!2sEsprit%20Block%20M!5e0!3m2!1sfr!2stn!4v1739614586337!5m2!1sfr!2stn" 
+                    frameborder="0" 
+                    allowfullscreen=""
+                    loading="lazy">
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+    {% include 'frontend/footer.html.twig' %}
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://www.google.com/recaptcha/api.js?render={{ RECAPTCHA_SITE_KEY() }}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // reCAPTCHA
+        grecaptcha.ready(function () {
+            grecaptcha.execute("{{ RECAPTCHA_SITE_KEY() }}", { action: "feed_form" }).then(function (token) {
+                document.getElementById("feed_captcha").value = token;
+            });
+        });
+
+        // Compteur de caractères
+        const messageField = document.querySelector('textarea[name="feed[commentaire_feed]"]');
+        const charCount = document.getElementById('charCount');
+        const maxLength = 1000;
+
+        function updateCharCount() {
+            const remaining = maxLength - messageField.value.length;
+            charCount.textContent = remaining;
+            
+            // Changer la couleur selon le nombre de caractères restants
+            if (remaining < 100) {
+                charCount.style.color = '#dc3545';
+            } else if (remaining < 200) {
+                charCount.style.color = '#ffc107';
+            } else {
+                charCount.style.color = '#6c757d';
+            }
+        }
+
+        messageField.addEventListener('input', updateCharCount);
+        updateCharCount(); // Initialiser le compteur
+
+        // Validation du formulaire
+        const form = document.querySelector('form');
+        const nameField = document.querySelector('input[name="feed[name_feed]"]');
+        const emailField = document.querySelector('input[name="feed[email_feed]"]');
+        const subjectField = document.querySelector('input[name="feed[subject_feed]"]');
+
+        function showError(input, message) {
+            const formGroup = input.closest('.mb-3, .mb-4');
+            const errorDiv = formGroup.querySelector('.invalid-feedback') || document.createElement('div');
+            errorDiv.className = 'invalid-feedback d-block';
+            errorDiv.textContent = message;
+            if (!formGroup.querySelector('.invalid-feedback')) {
+                input.insertAdjacentElement('afterend', errorDiv);
+            }
+            input.classList.add('is-invalid');
+        }
+
+        function removeError(input) {
+            const formGroup = input.closest('.mb-3, .mb-4');
+            const errorDiv = formGroup.querySelector('.invalid-feedback');
+            if (errorDiv) {
+                errorDiv.remove();
+            }
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function validateField(input, minLength = 3) {
+            if (!input.value.trim()) {
+                showError(input, 'Ce champ est requis');
+                return false;
+            } else if (input.value.length < minLength) {
+                showError(input, `Ce champ doit contenir au moins ${minLength} caractères`);
+                return false;
+            } else {
+                removeError(input);
+                return true;
+            }
+        }
+
+        // Validation en temps réel
+        [nameField, subjectField, messageField].forEach(field => {
+            field.addEventListener('input', () => validateField(field));
+        });
+
+        emailField.addEventListener('input', function() {
+            if (!validateEmail(this.value)) {
+                showError(this, 'Veuillez entrer une adresse email valide');
+            } else {
+                removeError(this);
+            }
+        });
+
+        // Validation à la soumission
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+
+            if (!validateField(nameField)) isValid = false;
+            if (!validateField(subjectField)) isValid = false;
+            if (!validateField(messageField, 10)) isValid = false;
+            
+            if (!validateEmail(emailField.value)) {
+                showError(emailField, 'Veuillez entrer une adresse email valide');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+                const firstError = form.querySelector('.is-invalid');
+                if (firstError) {
+                    firstError.focus();
+                }
+            }
+        });
+
+        // Animations pour les champs du formulaire
+        const formControls = document.querySelectorAll('.form-control');
+        formControls.forEach(control => {
+            control.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            control.addEventListener('blur', function() {
+                if (!this.value) {
+                    this.parentElement.classList.remove('focused');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends 'backend/indexbackend.html.twig' %}
+
+{% block title %}Produit index{% endblock %}
+
+{% block content %}
+    <h1>Produit index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Quantite</th>
+                <th>Nom_produit</th>
+                <th>Description_produit</th>
+                <th>Prix_produit</th>
+                <th>Disponibilte_produit</th>
+                <th>Image_produit</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for produit in produits %}
+            <tr>
+                <td>{{ produit.id }}</td>
+                <td>{{ produit.quantite }}</td>
+                <td>{{ produit.nomProduit }}</td>
+                <td>{{ produit.descriptionProduit }}</td>
+                <td>{{ produit.prixProduit }}</td>
+                <td>{{ produit.disponibilteProduit }}</td>
+                <td>
+                    {% if produit.imageProduit %}
+                        <img src="{{ asset('uploads/images/' ~ produit.imageProduit) }}" alt="{{ produit.nomProduit }}" style="max-width: 100px;">
+                    {% else %}
+                        No image
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ path('app_produit_show', {'id': produit.id}) }}">show</a>
+                    <a href="{{ path('app_produit_edit', {'id': produit.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Statistiques des produits</h2>
+    <div style="width: 400px; height: 400px;">
+        <canvas id="productStatsChart"></canvas>
+    </div>
+
+    <a href="{{ path('app_produit_new') }}">Create new</a>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('productStatsChart').getContext('2d');
+        const productStatsChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: [{% for categorie, count in produitsParCategorie %}'{{ categorie }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+                datasets: [{
+                    label: 'Nombre de produits',
+                    data: [{% for categorie, count in produitsParCategorie %}{{ count }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += context.raw;
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+{% endblock %}

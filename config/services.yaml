@@ -1,0 +1,60 @@
+parameters:
+  images_directory: "%kernel.project_dir%/public/uploads/images"
+  recaptcha_site_key: '%env(RECAPTCHA_SITE_KEY)%'
+  recaptcha_secret_key: '%env(RECAPTCHA_SECRET_KEY)%'
+
+services:
+  App\Security\UserActiveListener:
+        tags:
+            - { name: kernel.event_subscriber }
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  App\:
+    resource: "../src/"
+    exclude:
+      - "../src/DependencyInjection/"
+      - "../src/Entity/"
+      - "../src/Kernel.php"
+  App\Twig\RecaptchaExtension:
+    arguments:
+            $recaptchaSiteKey: '%recaptcha_site_key%'
+            $recaptchaSecretKey: '%recaptcha_secret_key%'
+
+  App\Twig\AppExtension:
+    tags: ['twig.extension']
+
+    # Configuration du service HuggingFace
+  App\Service\HuggingFaceService:
+    arguments:
+            $apiKey: '%env(HUGGINGFACE_API_KEY)%'
+
+    # Configuration du logger pour HuggingFace
+  monolog.logger.huggingface:
+    class: Symfony\Bridge\Monolog\Logger
+    arguments:
+            $name: 'huggingface'
+    calls:
+            - method: pushHandler
+              arguments:
+                  - '@monolog.handler.huggingface'
+
+  monolog.handler.huggingface:
+    class: Monolog\Handler\RotatingFileHandler
+    arguments:
+            $filename: '%kernel.logs_dir%/huggingface.log'
+            $maxFiles: 10
+    calls:
+            - method: setFormatter
+              arguments:
+                  - '@monolog.formatter.huggingface'
+
+  monolog.formatter.huggingface:
+    class: Monolog\Formatter\LineFormatter
+    arguments:
+            $format: "[%%datetime%%] %%channel%%.%%level_name%%: %%message%% %%context%% %%extra%%\n"
+
+  App\Service\OllamaService:
+    arguments:
+      $ollamaUrl: '%env(OLLAMA_URL)%'

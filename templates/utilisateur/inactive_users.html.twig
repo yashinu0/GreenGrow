@@ -1,0 +1,120 @@
+{# templates/utilisateur/inactive_users.html.twig #}
+
+{% extends 'backend/indexbackend.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        /* Ajouter un fond et des bordures au tableau */
+        .table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .table th, .table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .table-striped tbody tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+
+        .table-striped tbody tr:nth-child(even) {
+            background-color: #fff;
+        }
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: #57b846;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.btn a {
+    color: white;
+    text-decoration: none;
+}
+
+.btn:hover {
+    background: rgb(15, 97, 0);
+}
+        /* Style du bouton de réactivation */
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        /* Style du titre */
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        /* Style du message si aucun utilisateur n'est trouvé */
+        p {
+            font-size: 18px;
+            color: #777;
+        }
+    </style>
+{% endblock %}
+
+
+{% block js %}
+{{ parent() }}
+{% endblock %}
+{% block title %}Utilisateurs Désactivés{% endblock %}
+
+{% block content %}
+    <h1>Liste des utilisateurs désactivés</h1>
+
+    {% if utilisateurs is not empty %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Email</th>
+                    <th>Rôle</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for utilisateur in utilisateurs %}
+                    <tr>
+                        <td>{{ utilisateur.idUser }}</td>
+                        <td>{{ utilisateur.nomUser }}</td>
+                        <td>{{ utilisateur.prenomUser }}</td>
+                        <td>{{ utilisateur.emailUser }}</td>
+                        <td>{{ utilisateur.roleUser }}</td>
+                        <td>
+                            <form action="{{ path('app_utilisateur_toggle_status', { id_user: utilisateur.idUser }) }}" method="POST">
+                                <button type="submit" class="btn btn-success">Réactiver</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <br>  <br>  <br>
+                    <button class="btn btn-back" onclick="window.location.href='{{ path('app_utilisateur_index') }}'">Retour à la liste</button>
+
+    {% else %}
+        <p>Aucun utilisateur désactivé trouvé.</p>
+    {% endif %}
+{% endblock %}

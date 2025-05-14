@@ -1,0 +1,282 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Livreurs{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        {# Messages Flash #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="page-title">
+                    <h1>Liste des Livreurs</h1>
+                    <div class="action-buttons">
+                        <a href="{{ path('app_commande_index') }}" class="btn btn-success me-2">
+                            <i class="fas fa-list"></i> Liste des Commandes
+                        </a>
+                        <a href="{{ path('app_livreur_new') }}" class="btn btn-primary">
+                            <i class="fas fa-plus-circle"></i> Nouveau Livreur
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Photo</th>
+                                <th>Nom</th>
+                                <th>Prénom</th>
+                                <th>Numéro</th>
+                                <th>Adresse</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for livreur in livreurs %}
+                            <tr>
+                                <td>{{ livreur.id }}</td>
+                                <td class="photo-cell">
+                                    {% if livreur.photoLivreur %}
+                                        <img src="{{ asset('uploads/livreurs/' ~ livreur.photoLivreur) }}" alt="Photo" class="livreur-photo">
+                                    {% else %}
+                                        <div class="default-photo">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                    {% endif %}
+                                </td>
+                                <td>{{ livreur.nomLivreur }}</td>
+                                <td>{{ livreur.prenomLivreur }}</td>
+                                <td>{{ livreur.numeroLivreur }}</td>
+                                <td>{{ livreur.addresseLivreur }}</td>
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <a href="{{ path('app_livreur_show', {'id': livreur.id}) }}" class="btn btn-info btn-sm" title="Voir">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ path('app_livreur_edit', {'id': livreur.id}) }}" class="btn btn-warning btn-sm" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center">
+                                    <div class="empty-state">
+                                        <i class="fas fa-inbox fa-2x mb-3"></i>
+                                        <p>Aucun livreur trouvé</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .container-fluid {
+            padding: 2rem;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        .alert {
+            margin-bottom: 1.5rem;
+        }
+
+        .page-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title h1 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-buttons .btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+        }
+
+        .action-buttons .btn i {
+            font-size: 1rem;
+        }
+
+        .btn-success {
+            background-color: #2ecc71;
+            border-color: #2ecc71;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+            border-color: #27ae60;
+            color: white;
+        }
+
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            background-color: #2c3e50;
+            color: white;
+            font-weight: 500;
+            border: none;
+            padding: 1rem;
+        }
+
+        .table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .table td {
+            vertical-align: middle;
+            padding: 1rem;
+            border-color: #edf2f7;
+        }
+
+        .photo-cell {
+            width: 60px;
+        }
+
+        .livreur-photo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .default-photo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+        }
+
+        .btn-group .btn {
+            padding: 0.4rem 0.8rem;
+            margin: 0 0.2rem;
+        }
+
+        .btn-info {
+            background-color: #3498db;
+            border-color: #3498db;
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: #f39c12;
+            border-color: #f39c12;
+            color: white;
+        }
+
+        .btn-info:hover, .btn-warning:hover {
+            filter: brightness(90%);
+            color: white;
+        }
+
+        .empty-state {
+            padding: 3rem;
+            color: #64748b;
+        }
+
+        .empty-state i {
+            color: #94a3b8;
+        }
+
+        .empty-state p {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: #4361ee;
+            border-color: #4361ee;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            background-color: #3a0ca3;
+            border-color: #3a0ca3;
+        }
+
+        @media (max-width: 768px) {
+            .container-fluid {
+                padding: 1rem;
+            }
+
+            .page-title {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .btn-group {
+                display: flex;
+                justify-content: center;
+            }
+
+            .table-responsive {
+                border: 1px solid #edf2f7;
+                border-radius: 8px;
+            }
+        }
+    </style>
+{% endblock %}

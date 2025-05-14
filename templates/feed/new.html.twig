@@ -1,0 +1,15 @@
+{% extends 'backend/indexbackend.html.twig' %}
+
+{% block title %}New Feed{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="mb-4">Feedbacks</h1>
+
+        {# Formulaire de création #}
+        {{ include('feed/_form.html.twig') }}
+
+        {# Lien pour retourner à la liste #}
+        <a href="{{ path('app_feed_index') }}" class="btn btn-secondary mt-3">Back to List</a>
+    </div>
+{% endblock %}

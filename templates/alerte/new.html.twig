@@ -1,0 +1,131 @@
+{% extends 'backend/indexbackend.html.twig' %}
+
+{% block title %}Create New Alerte{% endblock %}
+
+{% block css %}
+{{ parent() }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
+<link rel="stylesheet" href="{{ asset('css/mdb.min.css') }}" />
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+
+    .card {
+        border: 3px solid #dee2e6 !important;
+        border-radius: 12px !important;
+        padding: 20px;
+        background: white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    label {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #495057;
+    }
+
+    input, select, textarea {
+        width: 100%;
+        padding: 0.8rem;
+        margin-top: 0.3rem;
+        border: 2px solid #dee2e6;
+        border-radius: 6px;
+        font-size: 1rem;
+        background-color: #f8f9fa;
+    }
+
+    input:focus, select:focus, textarea:focus {
+        border-color: #57b846;
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(87, 184, 70, 0.25);
+    }
+
+    .btn-primary {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background: #57b846;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        margin-top: 20px;
+    }
+
+    .btn-primary:hover {
+        background: #0f6100;
+        text-decoration: none;
+    }
+
+    .btn-secondary {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        margin-top: 20px;
+    }
+
+    .btn-secondary:hover {
+        background: #c82333;
+    }
+
+    .btn-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+    .btn-back {
+        font-size: 1rem;
+        text-decoration: none;
+        color: #007bff;
+    }
+
+    .btn-back:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <h1>Create New Alerte</h1>
+
+        {{ include('alerte/_form.html.twig') }}
+
+        <div class="btn-container">
+            <a href="{{ path('app_alerte_index') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Back to list
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

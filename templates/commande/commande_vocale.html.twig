@@ -1,0 +1,242 @@
+{% extends 'melek.html.twig' %}
+
+{% block title %}Commande Vocale{% endblock %}
+
+{% block content %}
+    <div class="voice-command-container">
+        <div class="card">
+            <div class="card-body text-center">
+                <h2 class="card-title mb-4">Commande Vocale</h2>
+                <p class="mb-4">Appuyez sur le bouton microphone et dictez votre commande</p>
+                
+                <button id="micButton" class="btn btn-primary btn-lg rounded-circle p-4 mb-4">
+                    <i class="fas fa-microphone fa-2x"></i>
+                </button>
+
+                <div class="alert alert-info mt-4" role="alert" id="status">
+                    Cliquez sur le microphone pour commencer
+                </div>
+
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Votre commande</h5>
+                    </div>
+                    <div class="card-body">
+                        <p id="transcriptText" class="mb-0">Aucune commande enregistrée</p>
+                    </div>
+                </div>
+
+                <div id="commandResult" class="mt-4"></div>
+
+                <div class="mt-4">
+                    <h5>Exemples de commandes:</h5>
+                    <ul class="list-unstyled">
+                        <li>"nouvelle commande pour 50 euros"</li>
+                        <li>"liste des commandes"</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .voice-command-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+        #micButton {
+            transition: all 0.3s ease;
+            width: 80px;
+            height: 80px;
+            padding: 0 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #micButton.recording {
+            background-color: #dc3545;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .alert {
+            transition: all 0.3s ease;
+        }
+    </style>
+{% endblock %}
+
+{% block js %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const micButton = document.getElementById('micButton');
+            const transcriptText = document.getElementById('transcriptText');
+            const commandResult = document.getElementById('commandResult');
+            const statusDiv = document.getElementById('status');
+            let recognition;
+
+            function updateStatus(message, type = 'info') {
+                statusDiv.className = `alert alert-${type}`;
+                statusDiv.textContent = message;
+            }
+
+            async function checkMicrophonePermission() {
+                try {
+                    console.log('Vérification des permissions du microphone...');
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    console.log('Microphone autorisé !');
+                    stream.getTracks().forEach(track => track.stop());
+                    return true;
+                } catch (err) {
+                    console.error('Erreur d\'accès au microphone:', err);
+                    return false;
+                }
+            }
+
+            // Vérification détaillée du support de la reconnaissance vocale
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            console.log('SpeechRecognition disponible:', !!SpeechRecognition);
+
+            if (!SpeechRecognition) {
+                micButton.style.display = 'none';
+                updateStatus('La reconnaissance vocale n\'est pas supportée par votre navigateur. Veuillez utiliser Edge ou Chrome.', 'danger');
+                return;
+            }
+
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = true;
+            recognition.lang = 'fr-FR';
+
+            recognition.onstart = function() {
+                console.log('Reconnaissance vocale démarrée');
+                micButton.classList.add('recording');
+                updateStatus('Écoute en cours...', 'warning');
+                transcriptText.textContent = 'Écoute...';
+            };
+
+            recognition.onresult = function(event) {
+                console.log('Résultat reçu:', event);
+                let finalTranscript = '';
+                let interimTranscript = '';
+
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        finalTranscript += transcript;
+                    } else {
+                        interimTranscript += transcript;
+                    }
+                }
+
+                if (finalTranscript) {
+                    console.log('Transcription finale:', finalTranscript);
+                    transcriptText.textContent = finalTranscript;
+                    updateStatus('Traitement de la commande...', 'info');
+                    processVoiceCommand(finalTranscript);
+                } else if (interimTranscript) {
+                    console.log('Transcription intermédiaire:', interimTranscript);
+                    transcriptText.textContent = interimTranscript;
+                }
+            };
+
+            recognition.onerror = function(event) {
+                console.error('Erreur de reconnaissance vocale:', event.error);
+                micButton.classList.remove('recording');
+                
+                let errorMessage = 'Une erreur est survenue avec la reconnaissance vocale.';
+                if (event.error === 'not-allowed') {
+                    errorMessage = 'L\'accès au microphone a été refusé. Veuillez autoriser l\'accès dans les paramètres de votre navigateur.';
+                } else if (event.error === 'no-speech') {
+                    errorMessage = 'Aucune parole n\'a été détectée. Veuillez réessayer.';
+                } else if (event.error === 'network') {
+                    errorMessage = 'Erreur réseau. Vérifiez votre connexion internet.';
+                } else if (event.error === 'aborted') {
+                    errorMessage = 'La reconnaissance vocale a été interrompue.';
+                }
+                
+                updateStatus(errorMessage, 'danger');
+            };
+
+            recognition.onend = function() {
+                console.log('Reconnaissance vocale terminée');
+                micButton.classList.remove('recording');
+                if (transcriptText.textContent === 'Écoute...') {
+                    updateStatus('Aucune parole détectée. Réessayez.', 'warning');
+                    transcriptText.textContent = 'Aucune commande enregistrée';
+                }
+            };
+
+            micButton.addEventListener('click', async function() {
+                console.log('Bouton microphone cliqué');
+                if (micButton.classList.contains('recording')) {
+                    console.log('Arrêt de l\'enregistrement');
+                    recognition.stop();
+                    updateStatus('Arrêt de l\'écoute', 'info');
+                } else {
+                    console.log('Démarrage de la vérification du microphone');
+                    const hasMicPermission = await checkMicrophonePermission();
+                    if (!hasMicPermission) {
+                        updateStatus('Veuillez autoriser l\'accès au microphone dans les paramètres de votre navigateur.', 'danger');
+                        return;
+                    }
+                    try {
+                        console.log('Démarrage de la reconnaissance vocale');
+                        recognition.start();
+                    } catch (err) {
+                        console.error('Erreur au démarrage de la reconnaissance:', err);
+                        updateStatus('Erreur au démarrage de la reconnaissance vocale. Veuillez réessayer.', 'danger');
+                    }
+                }
+            });
+
+            function processVoiceCommand(command) {
+                updateStatus('Envoi de la commande...', 'info');
+                fetch('/api/process-voice-command', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ command: command })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateStatus('Commande traitée avec succès!', 'success');
+                        commandResult.innerHTML = `
+                            <div class="alert alert-success">
+                                ${data.message}
+                                ${data.redirectUrl ? `<br><a href="${data.redirectUrl}" class="btn btn-primary mt-2">Voir la commande</a>` : ''}
+                            </div>
+                        `;
+                        if (data.redirectUrl) {
+                            setTimeout(() => {
+                                window.location.href = data.redirectUrl;
+                            }, 2000);
+                        }
+                    } else {
+                        updateStatus('Erreur lors du traitement de la commande', 'danger');
+                        commandResult.innerHTML = `
+                            <div class="alert alert-danger">
+                                ${data.message}
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    updateStatus('Erreur lors de la communication avec le serveur', 'danger');
+                    commandResult.innerHTML = `
+                        <div class="alert alert-danger">
+                            Une erreur est survenue: ${error.message}
+                        </div>
+                    `;
+                });
+            }
+        });
+    </script>
+{% endblock %}

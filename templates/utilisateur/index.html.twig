@@ -1,0 +1,303 @@
+{% extends 'backend/indexbackend.html.twig' %}
+
+{% block title %}Utilisateur index{% endblock %}
+
+{% block css %}
+{{ parent() }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
+<link rel="stylesheet" href="{{ asset('css/mdb.min.css') }}" />
+
+<style>
+
+#search-input {
+    width: 100%;
+    max-width: 400px; /* Largeur maximale */
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 2px solid #ddd; /* Bordure légère */
+    border-radius: 25px; /* Coins arrondis */
+    outline: none;
+    transition: all 0.3s ease-in-out;
+}
+
+#search-input:focus {
+    border-color: #007bff; /* Couleur bleue au focus */
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+}
+
+.pagination {
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.pagination .page-item .page-link {
+    color: #57b846 !important; /* Couleur de base */
+    border: none !important; /* Supprime les bordures */
+    background-color: transparent !important; /* Supprime la couleur d'arrière-plan par défaut */
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #57b846 !important; /* Couleur d'arrière-plan pour l'élément actif */
+    border: none !important; /* Supprime les bordures pour l'élément actif */
+    color: white !important; /* Couleur du texte pour l'élément actif */
+}
+
+.pagination .page-item .page-link:hover {
+    background-color: #57b846 !important; /* Couleur au survol */
+    color: white !important; /* Couleur du texte au survol */
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #d6d6d6 !important; /* Couleur pour les éléments désactivés */
+}
+
+.table {
+    border: 3px solid #dee2e6 !important;
+    font-size: 1.1rem;
+}
+
+.table th {
+    font-weight: 800 !important;
+    font-size: 1.2rem;
+    background-color: #f1f3f5 !important;
+    border-bottom: 4px solid #dee2e6 !important;
+    padding: 1.2rem !important;
+}
+
+.table td {
+    padding: 1.2rem !important;
+    border-width: 2px 0 !important;
+    vertical-align: middle !important;
+}
+
+.table tr:not(:last-child) td {
+    border-bottom: 2px solid #dee2e6 !important;
+}
+
+.card {
+    border: 3px solid #dee2e6 !important;
+    border-radius: 12px !important;
+    overflow: hidden;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa !important;
+    transform: translateX(10px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.badge {
+    font-size: 1rem !important;
+    padding: 0.6em 1em !important;
+}
+
+.avatar-placeholder {
+    width: 45px;
+    height: 45px;
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    border-radius: 50%;
+}
+
+.btn1 {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: #57b846;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.btn1:hover {
+    background: #0f6100;
+    text-decoration: none;
+}
+
+.table-align-middle td, .table-align-middle th {
+    vertical-align: middle !important;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Liste des Utilisateurs</h1>
+
+    <div class="mb-4">
+    <div class="form-group">
+            <input type="text" id="search-input" class="form-control" placeholder="Rechercher...">
+        </div>
+         <div >
+        <a href="{{ path('app_utilisateur_new') }}" class="btn1" style="text-decoration: none">
+            <i class="fas fa-plus-circle me-2"></i>Créer un nouvel utilisateur
+        </a>
+
+      <a href="{{ path('app_utilisateur_inactive') }}" class="btn1" style="background-color: #dc3545; marign-left: 10px; text-decoration: none">
+    <i class="fas fa-list me-2" style="color: white;"></i> Liste des utilisateurs désactivés
+</a>
+ </div>
+
+
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="card shadow-sm" style="width: 1000px; margin: 0 auto;">
+                <table class="table align-middle mb-0 table-hover" id="userTable">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Utilisateur</th>
+                            <th>Email</th>
+                            <th>Rôle</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for utilisateur in pagination %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-placeholder rounded-circle me-3">
+                                            {{ utilisateur.getPrenomUser()|first|upper }}{{ utilisateur.getNomUser()|first|upper }}
+                                        </div>
+                                        <div>
+                                            <p class="fw-bold mb-1">{{ utilisateur.getPrenomUser() }} {{ utilisateur.getNomUser() }}</p>
+                                            <p class="text-muted mb-0">ID: {{ utilisateur.getIdUser() }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="mb-0">{{ utilisateur.getEmailUser() }}</p>
+                                </td>
+                                <td>
+                                    <span class="badge rounded-pill 
+                                        {% if utilisateur.getRoleUser() == 'ROLE_ADMIN' %}bg-success
+                                        {% elseif utilisateur.getRoleUser() == 'ROLE_CLIENT' %}bg-info
+                                        {% elseif utilisateur.getRoleUser() == 'ROLE_VENDOR' %}bg-danger
+                                        {% else %}bg-warning
+                                        {% endif %}">
+                                         {{ utilisateur.getRoleUser()|capitalize }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <a href="{{ path('app_utilisateur_show', {'id_user': utilisateur.getIdUser() }) }}" 
+                                           class="btn btn-link text-primary p-2">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ path('app_utilisateur_edit', {'id_user': utilisateur.getIdUser() }) }}" 
+                                           class="btn btn-link text-warning p-2">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form method="post" 
+                                              action="{{ path('app_utilisateur_delete', {'id_user': utilisateur.getIdUser() }) }}"
+                                              onsubmit="return confirm('Êtes-vous sûr ?')">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ utilisateur.getIdUser() ) }}">
+                                            <button class="btn btn-link text-danger p-2">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ path('app_utilisateur_toggle_status', {'id_user': utilisateur.getIdUser()}) }}">
+                                            <button type="submit" class="btn btn-sm {% if utilisateur.getIsActive() %}btn-danger{% else %}btn-success{% endif %}">
+                                                {% if utilisateur.getIsActive() %}
+                                                    Désactiver
+                                                {% else %}
+                                                    Activer
+                                                {% endif %}
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center py-4">Aucun utilisateur trouvé</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="pagination-container" style="text-align: center;">
+    {{ knp_pagination_render(pagination) }}
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('#search-input').on('input', function() {
+        var query = $(this).val();
+        $.ajax({
+            url: '{{ path('user_search') }}',
+            method: 'POST',
+            data: { query: query },
+            dataType: 'json',
+            success: function(response) {
+                var userListHtml = '';
+                response.forEach(function(user) {
+                    userListHtml += '<tr>';
+                    // Colonne Utilisateur
+                    userListHtml += '<td>';
+                    userListHtml += '<div class="d-flex align-items-center">';
+                    userListHtml += '<div class="avatar-placeholder rounded-circle me-3">' 
+                        + user.prenom_user.charAt(0).toUpperCase() 
+                        + user.nom_user.charAt(0).toUpperCase() 
+                        + '</div>';
+                    userListHtml += '<div>';
+                    userListHtml += '<p class="fw-bold mb-1">' + user.prenom_user + ' ' + user.nom_user + '</p>';
+                    userListHtml += '<p class="text-muted mb-0">ID: ' + user.id_user + '</p>';
+                    userListHtml += '</div></div></td>';
+                    // Colonne Email
+                    userListHtml += '<td>' + user.email_user + '</td>';
+                    // Colonne Rôle
+                    userListHtml += '<td><span class="badge rounded-pill ';
+                    if (user.role_user === 'ROLE_ADMIN') {
+                        userListHtml += 'bg-success';
+                    } else if (user.role_user === 'ROLE_CLIENT') {
+                        userListHtml += 'bg-info';
+                    } else if (user.role_user === 'ROLE_VENDOR') {
+                        userListHtml += 'bg-danger';
+                    } else {
+                        userListHtml += 'bg-warning';
+                    }
+                    userListHtml += '">' + user.role_user.replace('ROLE_', '') + '</span></td>';
+                    // Colonne Actions
+                    userListHtml += '<td><div class="d-flex gap-2">';
+                    // Bouton Voir
+                    userListHtml += '<a href="/utilisateur/' + user.id_user + '" class="btn btn-link text-primary p-2"><i class="fas fa-eye"></i></a>';
+                    // Bouton Modifier
+                    userListHtml += '<a href="/utilisateur/' + user.id_user + '/edit" class="btn btn-link text-warning p-2"><i class="fas fa-edit"></i></a>';
+                    // Formulaire Supprimer
+                    userListHtml += '<form method="post" action="/utilisateur/' + user.id_user + '">';
+                    userListHtml += '<input type="hidden" name="_token" value="' + user.delete_token + '">';
+                    userListHtml += '<button class="btn btn-link text-danger p-2" onclick="return confirm(\'Êtes-vous sûr ?\')"><i class="fas fa-trash-alt"></i></button>';
+                    userListHtml += '</form>';
+                    // Formulaire Activation/Désactivation
+                    userListHtml += '<form method="POST" action="/utilisateur/' + user.id_user + '/toggle-status">';
+                    userListHtml += '<input type="hidden" name="_token" value="' + user.toggle_token + '">';
+                    userListHtml += '<button type="submit" class="btn btn-sm ' + (user.is_active ? 'btn-danger' : 'btn-success') + '">';
+                    userListHtml += user.is_active ? 'Désactiver' : 'Activer';
+                    userListHtml += '</button></form>';
+                    userListHtml += '</div></td></tr>';
+                });
+                $('#userTable tbody').html(userListHtml);
+            },
+            error: function(xhr, status, error) {
+                console.error('Erreur AJAX:', status, error);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

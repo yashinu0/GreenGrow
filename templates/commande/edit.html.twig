@@ -1,0 +1,95 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier la Commande{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10 col-sm-12">
+                <!-- Carte pour le formulaire -->
+                <div class="card shadow-lg border-0 rounded-4" style="background: linear-gradient(135deg, #E9F5E1, #F0F8FF);">
+                    <div class="card-header bg-success text-white text-center py-4 rounded-top-4">
+                        <h1 class="display-5 fw-bold mb-0">
+                            <i class="fas fa-edit me-2"></i>Modifier la Commande
+                        </h1>
+                    </div>
+                    <div class="card-body p-5">
+                        <!-- Formulaire -->
+                        {{ include('commande/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+
+                        <!-- Boutons d'action -->
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <a href="{{ path('app_commande_index') }}" class="btn btn-outline-success btn-lg px-4 py-2 rounded-pill">
+                                <i class="fas fa-arrow-left me-2"></i>Retour à la liste
+                            </a>
+                            <button type="submit" form="commande-form" class="btn btn-success btn-lg px-4 py-2 rounded-pill">
+                                <i class="fas fa-save me-2"></i>Mettre à jour
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulaire de suppression -->
+        <div class="mt-4 text-center">
+            {{ include('commande/_delete_form.html.twig') }}
+        </div>
+    </div>
+
+    <style>
+        /* Styles modernes */
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-outline-success {
+            border-color: #2E8B57;
+            color: #2E8B57;
+            transition: all 0.3s ease;
+        }
+        .btn-outline-success:hover {
+            background-color: #2E8B57;
+            color: white;
+        }
+
+        .btn-success {
+            background-color: #2E8B57;
+            border-color: #2E8B57;
+            transition: all 0.3s ease;
+        }
+        .btn-success:hover {
+            background-color: #228B22;
+            border-color: #228B22;
+            transform: scale(1.05);
+        }
+
+        .form-control {
+            border-radius: 12px;
+            border: 2px solid #2E8B57;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .form-control:focus {
+            border-color: #8B4513;
+            box-shadow: 0 0 8px rgba(46, 139, 87, 0.6);
+        }
+
+        h1 i {
+            color: #8B4513;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+{% endblock %}

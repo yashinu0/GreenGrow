@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <!-- basic -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <!-- site metas -->
+    <title>{% block title %}GreenGrow{% endblock %}</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="author" content="">
+        <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="icon" type="image/png" href="{{asset('images/logo.png')}}">
+    <!-- bootstrap css -->
+    	{% block css%}
+            <style>
+/* Effet de flou */
+.modal-backdrop.show {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 0.9 !important;
+}
+
+/* Animation de la modale */
+.modal-content {
+    transform: scale(0.9);
+    transition: all 0.3s ease;
+}
+
+.modal.show .modal-content {
+    transform: scale(1);
+}
+
+/* Adaptation de l'interface existante */
+.modal-dialog.modal-lg {
+    max-width: 900px;
+}
+
+.modal-body .limiter {
+    padding: 20px;
+}
+
+.modal-body .container-login100 {
+    min-height: auto;
+}
+/* Style de base */
+.user-select {
+    background-color: white;
+    color: #333;
+    font-size: 14px;
+    padding: 8px 12px;
+    border: 2px solid #28a745; /* Bordure verte pour correspondre au bouton */
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+    appearance: none; /* Supprime l'apparence par défaut */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    position: relative;
+}
+
+/* Ajout d'une icône flèche personnalisée */
+.user-select-container {
+    position: relative;
+    display: inline-block;
+}
+
+.user-select-container::after {
+    content: "▼"; /* Petite flèche vers le bas */
+    font-size: 12px;
+    color: #28a745;
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* Effet au survol */
+.user-select:hover {
+    border-color: #218838;
+}
+
+/* Effet au focus */
+.user-select:focus {
+    border-color: #1e7e34;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+}
+
+      </style>
+    <link rel="stylesheet" href="{{asset('css/bootstrap.min.css')}}">
+    <!-- style css -->
+    <link rel="stylesheet" href="{{asset('css/style.css')}}">
+    <!-- Responsive-->
+    <link rel="stylesheet" href="{{asset('css/responsive.css')}}">
+    <!-- fevicon -->
+    <link rel="icon" href="{{asset('images/fevicon.png')}}" type="image/gif">
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" href="{{asset('css/jquery.mCustomScrollbar.min.css')}}">
+    <!-- Tweaks for older IEs-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css"
+      media="screen">
+       <link rel="stylesheet" href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('fonts/font-awesome-4.7.0/css/font-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/animate/animate.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/css-hamburgers/hamburgers.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/select2/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/util.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/main.css') }}">
+    <style>
+    .user-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px; /* Largeur du cercle */
+    height: 40px; /* Hauteur du cercle */
+    border-radius: 50%; /* Pour rendre le cercle */
+    background-color: white; /* Couleur de fond du cercle */
+    color: black; /* Couleur du texte */
+    font-weight: bold; /* Gras pour les initiales */
+    border: 2px solid #ccc; /* Bordure autour du cercle, facultatif */
+    
+    }
+
+.initials {
+    font-size: 18px; /* Taille des initiales */
+}
+
+
+
+.location_icon_bottum_tt ul {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 15px; /* Espacement entre les éléments */
+    list-style: none;
+    padding: 0;
+      color:black;
+
+}
+
+.location_icon_bottum_tt ul li {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.user-circle {
+
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: white;
+    color: black;
+    font-weight: bold;
+    border: 2px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center ;
+    font-size: 16px;
+}
+
+.send {
+    background-color: #28a745; /* Vert pour correspondre au thème */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.send:hover {
+    background-color: #218838;
+}
+
+.menu-area-main li a {
+    font-size: 16px; /* Augmenter la taille de la police */
+    color: #333; /* Couleur sombre pour plus de contraste */
+    transition: color 0.3s; /* Transition douce pour l'effet de survol */
+}
+
+.menu-area-main li a:hover {
+    color: #28a745; /* Couleur verte au survol */
+    text-decoration: underline; /* Soulignement au survol */
+}
+.client-link {
+    font-weight: bold; /* Gras pour mettre en évidence */
+    color: #333; /* Couleur sombre */
+}
+
+.client-link:hover {
+    color: #28a745; /* Couleur verte au survol */
+    text-decoration: underline; /* Soulignement au survol */
+}
+    </style>
+
+      {% endblock %} 
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+  </head>
+ 
+
+   {% block js %}
+   <script src="https://www.google.com/recaptcha/api.js?render={{ "6LcykuYqAAAAAAIM9RXVB-dgTvQ86CULYCxBGqAR" }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.querySelector(".login100-form");
+
+            form.addEventListener("submit", function(event) {
+                event.preventDefault(); // Empêcher l'envoi du formulaire immédiatement
+
+                grecaptcha.ready(function() {
+                    grecaptcha.execute('{{ "6LcykuYqAAAAAAIM9RXVB-dgTvQ86CULYCxBGqAR" }}', { action: 'login' }).then(function(token) {
+                        document.getElementById('recaptchaResponse').value = token;
+                        form.submit(); // Envoyer le formulaire après avoir ajouté le token
+                    });
+                });
+            });
+        
+        });
+     
+    </script>
+    <!-- end footer -->
+    <!-- Javascript files-->
+     <script src="{{ asset('vendor/jquery/jquery-3.2.1.min.js') }}"></script>
+    <script src="{{ asset('vendor/bootstrap/js/popper.js') }}"></script>
+    <script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('vendor/select2/select2.min.js') }}"></script>
+    <script src="{{ asset('vendor/tilt/tilt.jquery.min.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            $('.js-tilt').tilt({ scale: 1.1 });
+        });
+    </script>
+    <script src="{{ asset('js/main.js') }}"></script>
+    <script src="{{asset('js/jquery.min.js')}}"></script>
+    <script src="{{asset('js/popper.min.js')}}"></script>
+    <script src="{{asset('js/bootstrap.bundle.min.js')}}"></script>
+    <script src="{{asset('js/jquery-3.0.0.min.js')}}"></script>
+    <script src="{{asset('js/plugin.js')}}"></script>
+    <!-- sidebar -->
+    <script src="{{asset('js/jquery.mCustomScrollbar.concat.min.js')}}"></script>
+    <script src="{{asset('js/custom.js')}}"></script>
+    <!-- javascript -->
+    <script src="{{asset('js/owl.carousel.js')}}"></script>
+    <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+    <script>
+$(document).ready(function() {
+    // Initialisation de l'effet tilt
+    $('.js-tilt').tilt({
+        scale: 1.1,
+        reset: false
+    });
+
+    // Gestion des erreurs
+
+
+    // Réinitialisation du formulaire
+    $('#loginModal').on('hidden.bs.modal', function () {
+        $(this).find('form').trigger('reset');
+    });
+});
+</script>
+    <script>
+        $(document).ready(function() {
+            $(".fancybox").fancybox({
+                openEffect: "none",
+                closeEffect: "none"
+            });
+
+            $(".zoom").hover(function() {
+
+                $(this).addClass('transition');
+            }, function() {
+
+                $(this).removeClass('transition');
+            });
+        });
+    </script>
+    <script>
+        // This example adds a marker to indicate the position of Bondi Beach in Sydney,
+        // Australia.
+        function initMap() {
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 11,
+                center: {
+                    lat: 40.645037,
+                    lng: -73.880224
+                },
+            });
+
+            var image = 'images/maps-and-flags.png';
+            var beachMarker = new google.maps.Marker({
+                position: {
+                    lat: 40.645037,
+                    lng: -73.880224
+                },
+                map: map,
+                icon: image
+            });
+        }
+    </script>
+    <script>
+$(document).ready(function() {
+    // Show modal if there are login errors
+    {% if app.flashes('login_error') %}
+        $('#loginModal').modal('show');
+    {% endif %}
+
+    // Add blur effect when modal shows
+    $('#loginModal').on('show.bs.modal', function () {
+        $('body').addClass('modal-blur');
+    });
+
+    // Remove blur effect when modal hides
+    $('#loginModal').on('hidden.bs.modal', function () {
+        $('body').removeClass('modal-blur');
+    });
+});
+</script>
+    <!-- google map js -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8eaHt9Dh5H57Zh0xVTqxVdBFCvFMqFjQ&callback=initMap"></script>
+    <!-- end google map js -->
+
+    {% endblock %}
+      <body>
+      {% block body %}
+      
+   <body class="main-layout ">
+     <div class="container">
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+
+    <!-- loader 
+    <div class="loader_bg">        <div class="loader"><img src="images/loading.gif" alt="#" /></div> -->
+    <!-- end loader -->
+    <!-- header -->
+    <header>
+      <!-- header inner -->
+      <div class="header">
+        <div class="container" style="height: 76px;">
+          <div class="row">
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col logo_section">
+              <div class="full">
+                <div class="center-desk">
+                  <div class="logo"> <a href="index.html"><img src="{{asset('images/logo.png')}}"
+
+                        alt="#" width="85" height="200"></a> </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9">
+          <div class="location_icon_bottum_tt" >
+               <ul class="d-flex align-items-center">
+    <li><img src="{{asset('icon/email1.png')}}"> GreenGrow@gmail.com</li>
+    <li><img src="{{asset('icon/call1.png')}}"> (+216) 25845846</li>
+    <li class="d-flex align-items-center">
+    {% if app.user %}
+        <span class="user-circle d-flex justify-content-center align-items-center">
+            <span class="initials">{{ app.user.getNomUser()|slice(0, 1) }}{{ app.user.getPrenomUser()|slice(0, 1) }}</span>
+        </span>
+        <a href="{{ path('app_logout') }}" class="send ml-3">Déconnexion</a>
+    {% else %}
+        <button class="send ml-3" data-toggle="modal" data-target="#loginModal">
+            Connexion
+        </button>
+    {% endif %}
+</li>
+
+</ul>
+
+            
+            </div>
+           
+            </div>
+          </div>
+          <div class="row"style="margin-top: -20px; " >
+            <div class="col-md-12 location_icon_bottum" >
+              <div class="row" > 
+                <div class="col-md-8 ">
+                  <div class="menu-area">
+                    <div class="limit-box">
+                      <nav class="main-menu">
+                        <ul class="menu-area-main">
+                          <li class="active"> <a href="{{ path('app_user') }}">Home</a> </li>
+                              {% if app.user %}
+<li class="active"><a href="{{ path('app_utilisateur_edit_profile', { 'id_user': app.user.idUser }) }}"  class="active">Modifier le profil</a> </li>
+                              {% else %}
+                        <li ><a href="#">Inscription</a>
+                                            <ul >
+                                                <li style="color:black"><a href="{{ path('app_inscription_vendeur') }}" class="client-link" style="color:black !important">Vendeur</a></li>
+<li >
+<a href="{{ path('app_inscription') }}" class="client-link" style="color:black !important">Client</a></li>
+                                            </ul>
+                                        </li>    
+                              {% endif %}                      
+                          <li><a href="{{ path('app_produitss') }}">Products</a></li>
+                           {% if app.user %}
+                            <li  class="active">
+                        <a href="{{ path('app_frendu', { 'id_user': app.user.idUser }) }}">Supervision</a></li>
+                        {% endif %} 
+                              
+                          <li><a href="{{ path('app_feed') }}">Contact Us</a></li>
+                        </ul>
+                      </nav>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                  <form class="search"> <input class="form-control" placeholder="Search"
+
+                      type="text"> <button><img src="{{asset('images/search_icon.png')}}"></button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end header inner --> </header>
+    <!-- end header -->
+    
+    {% block section %} 
+{% endblock %}
+
+    <!-- end contact -->
+    <!-- footer -->
+    <!--  footer --> <footr>
+      <div class="footer top_layer ">
+        <div class="container">
+        
+          <div class="row">
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+              <div class="address"> <a href="index.html"> <img src="{{asset('images/logo.png')}}"
+
+                    alt="logo" width="85" height="200"></a>
+                <p>Optimisez votre agriculture avec nos capteurs IoT
+                  intelligents</p>
+              </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+              <div class="address">
+                <h3>Liens rapides</h3>
+                <ul class="Links_footer">
+                  <li><img src="{{asset('icon/3.png')}}" alt="#"> <a href="#">Maintenance</a>
+                  </li>
+                  <li><img src="{{asset('icon/3.png')}}" alt="#"> <a href="#"> Join Us</a> </li>
+                  <li><img src="{{asset('icon/3.png')}}" alt="#"> <a href="#">Language Packs</a>
+                  </li>
+                  <li><img src="{{asset('icon/3.png')}}" alt="#"> <a href="#">LearnPress</a>
+                  </li>
+                  <li><img src="{{asset('icon/3.png')}}" alt="#"> <a href="#">Release Status</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+              <div class="address">
+                <h3>Subcribe email</h3>
+                <input class="form-control" placeholder="Your Email" name="Your Email"
+
+                  type="type"> <button class="submit-btn">Envoyer</button> </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+              <div class="address">
+                <h3>Contact Us</h3>
+                <ul class="loca">
+                  <li> <a href="#"><img src="{{asset('icon/loc.png')}}" alt="#"></a>Ghazela
+                    <br>
+                    Ariana Tunis</li>
+                  <li> <a href="{{ path('app_feed') }}"><img src="{{asset('icon/email.png')}}" alt="#"></a>GreenGrow@gmail.com
+                    </li>
+                  <li> <a href="#"><img src="{{asset('icon/call.png')}}" alt="#"></a>+216
+                    25845846 </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="copyright">
+        <div class="container">
+          <p> 2025 All Rights Reserved. Design By<a href=""> Selim Gharbi</a></p>
+        </div>
+      </div>
+    </footr>
+    
+
+
+      {% endblock %}
+      <!-- Login Modal -->
+<!-- Login Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="border-radius: 25px; background: #fff;">
+            <div class="modal-body p-0">
+                <div class="limiter">
+                <center>
+                            <div class="login100-pic js-tilt" data-tilt>
+                                <img src="{{ asset('images/img-01.png') }}" alt="IMG">
+                            </div>
+
+                <form method="post" action="{{ path('app_login') }}" class="login100-form validate-form">
+
+                                <span class="login100-form-title">Connexion</span>
+
+                               
+
+                                <div class="wrap-input100 validate-input" data-validate="Email requis">
+                        <input class="input100" type="text" id="email_user" name="email_user" placeholder="Email"  required autofocus >
+                                    <span class="focus-input100"></span>
+                                    <span class="symbol-input100">
+                                        <i class="fa fa-envelope" aria-hidden="true"></i>
+                                    </span>
+                                  
+                                </div>
+
+                                <div class="wrap-input100 validate-input" data-validate="Mot de passe requis">
+                        <input class="input100" type="password" name="mot_de_passe_user" id="mot_de_passe_user"  placeholder="Password" required>
+                                    <span class="focus-input100"></span>
+                                    <span class="symbol-input100">
+                                        <i class="fa fa-lock" aria-hidden="true"></i>
+                                    </span>
+                                  
+                                       
+                                </div>
+
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                                <div class="container-login100-form-btn">
+                                    <button class="login100-form-btn" type="submit">
+                                        Se connecter
+                                    </button>
+                                </div>
+
+                                <div class="text-center p-t-12">
+                                    <a class="txt2" href="{{ path('app_forgot_password_request') }}">
+                                        Mot de passe oublié ?
+                                    </a>
+                                </div>
+
+                                <div class="text-center p-t-136">
+                                    <a class="txt2" href="{{ path('app_inscription') }}">
+                                        Créer un compte
+                                        <i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                                                    <input type="hidden" name="recaptcha_response" id="recaptchaResponse">
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div> </center>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,351 @@
+{% extends 'backend/indexbackend.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
+    <link rel="stylesheet" href="{{ asset('css/mdb.min.css') }}" />
+    <style>
+        .table td, .table th {
+            vertical-align: middle;
+        }
+        .status-filter {
+            transition: all 0.3s ease;
+            border: none;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .status-filter:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .status-filter.active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .btn-primary, .btn-primary:hover, .badge.bg-primary {
+            background-color: #0d6efd !important;
+            border-color: #0d6efd !important;
+        }
+        .btn-outline-primary:hover {
+            background-color: #0d6efd !important;
+            border-color: #0d6efd !important;
+        }
+        #showAllBtn.active {
+            background-color: #0d6efd !important;
+            border-color: #0d6efd !important;
+            color: white;
+        }
+        .message-preview {
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+        }
+        .new-reclamation {
+            animation: highlight 2s ease-in-out;
+        }
+        @keyframes highlight {
+            0% { background-color: #fff3cd; }
+            100% { background-color: transparent; }
+        }
+        #notification-sound {
+            display: none;
+        }
+        .btn-warning {
+            background-color: #ffc107;
+            color: #000;
+        }
+        .btn-success {
+            background-color: #198754;
+            color: #fff;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: #fff;
+        }
+        .gap-2 {
+            gap: 0.5rem !important;
+        }
+        /* Status colors */
+        .status-pending {
+            background-color: #ffc107 !important;
+            color: #000 !important;
+        }
+        .status-in-progress {
+            background-color: #0d6efd !important;
+            color: #fff !important;
+        }
+        .status-resolved {
+            background-color: #198754 !important;
+            color: #fff !important;
+        }
+        .status-closed {
+            background-color: #6c757d !important;
+            color: #fff !important;
+        }
+    </style>
+{% endblock %}
+
+{% block title %}Gestion des réclamations{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <audio id="notification-sound" preload="auto">
+            <source src="{{ asset('sounds/notification.mp3') }}" type="audio/mpeg">
+        </audio>
+
+        <h1>Gestion des réclamations</h1>
+        
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {# Statistiques des réclamations #}
+        <div class="row mb-4">
+            {% set statuses = {
+                'pending': {'count': 0, 'class': 'warning', 'icon': 'clock', 'label': 'En attente'},
+                'in_progress': {'count': 0, 'class': 'primary', 'icon': 'spinner', 'label': 'En cours'},
+                'resolved': {'count': 0, 'class': 'success', 'icon': 'check-circle', 'label': 'Résolue'},
+                'closed': {'count': 0, 'class': 'secondary', 'icon': 'times-circle', 'label': 'Fermée'}
+            } %}
+            
+            {% for reclamation in reclamations %}
+                {% set currentStatus = reclamation.statutRec|default('pending') %}
+                {% if currentStatus in statuses|keys %}
+                    {% set statuses = statuses|merge({
+                        (currentStatus): {
+                            'count': statuses[currentStatus].count + 1,
+                            'class': statuses[currentStatus].class,
+                            'icon': statuses[currentStatus].icon,
+                            'label': statuses[currentStatus].label
+                        }
+                    }) %}
+                {% endif %}
+            {% endfor %}
+            
+            {% for status, data in statuses %}
+                <div class="col-md-3 col-sm-6">
+                    <button type="button" class="status-filter btn btn-{{ data.class }} w-100 mb-2" data-status="{{ status }}">
+                        <div class="d-flex align-items-center justify-content-center">
+                            <i class="fas fa-{{ data.icon }} fa-2x me-2"></i>
+                            <div>
+                                <h4 class="mb-0" id="count-{{ status }}">{{ data.count }}</h4>
+                                <small>{{ data.label }}</small>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Liste des réclamations</h5>
+                    <div class="d-flex gap-2">
+                        <button type="button" id="showAllBtn" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-list me-1"></i> Tout afficher
+                        </button>
+                        <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Rechercher..." style="width: 200px;">
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="reclamationsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Date</th>
+                                <th>Client</th>
+                                <th>Produit</th>
+                                <th>Type</th>
+                                <th>Statut</th>
+                                <th>Dernière activité</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reclamation in reclamations %}
+                                {% set lastMessage = reclamation.messages|sort((a, b) => b.sentAt <=> a.sentAt)|first %}
+                                {% set isNewMessage = lastMessage and not lastMessage.isFromAdmin %}
+                                {% set currentStatus = reclamation.statutRec|default('pending') %}
+                                {% set isNew = reclamation.dateRec|date('Y-m-d') == "now"|date('Y-m-d') %}
+                                {% set status = currentStatus|replace({' ': '_'})|lower %}
+                                
+                                <tr data-status="{{ status }}" class="{% if isNew %}new-reclamation{% endif %} {% if isNewMessage and status != 'resolved' %}table-warning{% endif %}">
+                                    <td>{{ reclamation.id }}</td>
+                                    <td>
+                                        {{ reclamation.dateRec|date('d/m/Y') }}
+                                        {% if isNew %}
+                                            <span class="badge bg-danger">Nouveau</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ reclamation.utilisateur.emailUser }}</td>
+                                    <td>
+                                        {% if reclamation.produit %}
+                                            {{ reclamation.produit.nomProduit }}
+                                        {% else %}
+                                            <span class="text-muted">Produit supprimé</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% set desc = reclamation.descriptionRec|lower %}
+                                        {% if 'défectueux' in desc %}
+                                            <span class="badge bg-danger">Produit Défectueux</span>
+                                        {% elseif 'livraison' in desc %}
+                                            <span class="badge bg-warning">Problème de Livraison</span>
+                                        {% elseif 'non conforme' in desc %}
+                                            <span class="badge bg-info">Produit Non Conforme</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ reclamation.descriptionRec }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge
+                                            {% if status == 'pending' %}bg-warning
+                                            {% elseif status == 'in_progress' %}bg-primary
+                                            {% elseif status == 'resolved' %}bg-success
+                                            {% else %}bg-secondary
+                                            {% endif %}">
+                                            {% if status == 'pending' %}
+                                                En attente
+                                            {% elseif status == 'in_progress' %}
+                                                En cours
+                                            {% elseif status == 'resolved' %}
+                                                Résolue
+                                            {% else %}
+                                                Fermée
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if lastMessage %}
+                                            <div>
+                                                <small class="text-muted">{{ lastMessage.sentAt|date('d/m/Y H:i') }}</small>
+                                                {% if isNewMessage %}
+                                                    <span class="badge bg-danger ms-2">Nouveau message</span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="message-preview text-muted">
+                                                "{{ lastMessage.content }}"
+                                            </div>
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ path('admin_reclamation_show', {'id': reclamation.id}) }}" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i> Voir
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            console.log('Document ready');
+            
+            // Fonction de recherche
+            $("#searchInput").on('keyup', function() {
+                var value = $(this).val().toLowerCase();
+                filterTable(value, '');
+            });
+
+            // Bouton "Tout afficher"
+            $("#showAllBtn").on('click', function() {
+                $("#searchInput").val(''); // Réinitialiser la barre de recherche
+                filterTable('', ''); // Réinitialiser les filtres
+                $(".status-filter").removeClass('active'); // Désactiver tous les boutons de statut
+                $(this).addClass('active'); // Activer le bouton "Tout afficher"
+            });
+
+            // Fonction de filtrage par statut
+            $(".status-filter").on('click', function() {
+                var status = $(this).data('status');
+                $("#searchInput").val(''); // Réinitialiser la barre de recherche
+                $("#showAllBtn").removeClass('active'); // Désactiver le bouton "Tout afficher"
+                filterTable('', status);
+                
+                // Toggle active state
+                $(".status-filter").removeClass('active');
+                $(this).addClass('active');
+            });
+
+            // Fonction de filtrage combinée
+            function filterTable(searchText, status) {
+                $("#reclamationsTable tbody tr").each(function() {
+                    var row = $(this);
+                    var rowText = row.text().toLowerCase();
+                    var rowStatus = row.data('status');
+                    var matchSearch = searchText === '' || rowText.indexOf(searchText) > -1;
+                    var matchStatus = status === '' || rowStatus === status;
+                    row.toggle(matchSearch && matchStatus);
+                });
+                updateStatusCounts();
+            }
+
+            function updateStatusCounts() {
+                // Réinitialise tous les compteurs à 0
+                {% for status, data in statuses %}
+                    $("#count-{{ status }}").text(0);
+                {% endfor %}
+
+                // Compte les lignes visibles pour chaque statut
+                $("#reclamationsTable tbody tr:visible").each(function() {
+                    var rowStatus = $(this).data('status');
+                    var countElem = $("#count-" + rowStatus);
+                    if (countElem.length) {
+                        countElem.text(parseInt(countElem.text()) + 1);
+                    }
+                });
+            }
+
+            // Configuration de Toastr
+            toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "timeOut": "5000"
+            };
+
+            let lastReclamationId = {{ reclamations|length > 0 ? reclamations|first.id : 0 }};
+            
+            // Vérifier les nouvelles réclamations toutes les 5 secondes
+            setInterval(function() {
+                fetch('{{ path('admin_check_new_reclamations') }}?lastId=' + lastReclamationId)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.hasNew) {
+                            // Afficher la notification
+                            toastr.info(
+                                'Cliquez pour actualiser la page',
+                                'Nouvelle réclamation reçue !',
+                                {
+                                    onclick: function() {
+                                        window.location.reload();
+                                    }
+                                }
+                            );
+                        }
+                    })
+                    .catch(error => console.error('Erreur:', error));
+            }, 5000);
+        });
+    </script>
+                    <div style="height: 50px;"></div>
+
+{% endblock %}

@@ -1,0 +1,41 @@
+{{ form_start(form, {'attr': {'id': 'reclamationForm', 'class': 'no-nice-select'}}) }}
+    {{ form_errors(form) }}
+    
+    <div class="mb-4">
+        <label class="form-label fw-bold mb-2">Type de la réclamation </label>
+        {{ form_widget(form.description_rec, {
+            'attr': {
+                'class': 'form-control shadow-sm no-nice-select',
+                'required': 'required',
+                'placeholder': 'Choisissez un type de réclamation'
+            }
+        }) }}
+    </div>
+
+    <div class="mb-4">
+        {{ form_row(form.message_reclamation, {
+            'label': 'Détails de votre réclamation',
+            'label_attr': {
+                'class': 'form-label fw-bold'
+            },
+            'attr': {
+                'class': 'form-control shadow-sm',
+                'rows': 5,
+                'placeholder': 'Décrivez votre problème en détail (10 à 1000 caractères)...',
+                'required': 'required',
+                'minlength': '10',
+                'maxlength': '1000'
+            }
+        }) }}
+        <div class="form-text mt-1">
+            <span id="charCount">1000</span> caractères restants
+        </div>
+    </div>
+
+    <div class="text-end mt-4">
+        <button type="submit" class="btn btn-success btn-custom" style="background-color: #28a745 !important; border-color: #28a745 !important; color: white !important;">
+            <i class="fas fa-paper-plane"></i>
+            <span>Envoyer la réclamation</span>
+        </button>
+    </div>
+{{ form_end(form) }}

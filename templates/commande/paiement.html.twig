@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement de la commande{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h1 class="h3 mb-0">Paiement de la commande #{{ commande.idCommande }}</h1>
+                    </div>
+                    <div class="card-body">
+                        {% for label, messages in app.flashes %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ label }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+
+                        <div class="mb-4">
+                            <h4>Détails de la commande</h4>
+                            <p><strong>Montant total :</strong> {{ commande.prixtotalCommande }} €</p>
+                        </div>
+
+                        <form method="post" action="{{ path('app_commande_paiement', {'id_commande': commande.idCommande}) }}">
+                            <div class="mb-4">
+                                <h4>Choisissez votre mode de paiement</h4>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="mode_paiement" id="especes" value="especes" required>
+                                    <label class="form-check-label" for="especes">
+                                        Espèces
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="mode_paiement" id="cheque" value="cheque">
+                                    <label class="form-check-label" for="cheque">
+                                        Chèque
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="mode_paiement" id="carte" value="carte">
+                                    <label class="form-check-label" for="carte">
+                                        Carte bancaire
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    Procéder au paiement
+                                </button>
+                                <a href="{{ path('app_commande_show', {'id_commande': commande.idCommande}) }}" class="btn btn-secondary">
+                                    Retour aux détails de la commande
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

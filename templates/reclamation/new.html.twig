@@ -1,0 +1,192 @@
+{% extends 'basefeed.html.twig' %}
+
+{% block title %}Nouvelle réclamation{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        .no-nice-select + .nice-select {
+            display: none !important;
+        }
+        .loader_bg {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+        .reclamation-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .info-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            color: #333;
+        }
+        .info-title i {
+            font-size: 1.2em;
+            width: 24px;
+            text-align: center;
+        }
+        .btn-custom {
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .btn-outline-primary {
+            color: #28a745;
+            border-color: #28a745;
+            background-color: white;
+        }
+        .btn-outline-primary:hover {
+            color: #28a745;
+            background-color: white;
+            border-color: #28a745;
+        }
+        .product-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+        .product-info .info-title {
+            margin-bottom: 0;
+        }
+        #reclamationForm {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+        }
+        #reclamationForm .form-group {
+            margin-bottom: 25px;
+        }
+        #reclamationForm .form-control {
+            border-radius: 10px;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            background-color: white;
+        }
+        #reclamationForm .form-control:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+        }
+        #reclamationForm select.form-control {
+            height: auto;
+            -webkit-appearance: listbox;
+            -moz-appearance: listbox;
+            appearance: listbox;
+        }
+        #reclamationForm textarea.form-control {
+            min-height: 120px;
+        }
+        .btn-success.btn-custom {
+            background-color: #28a745 !important;
+            border-color: #28a745 !important;
+            color: white !important;
+        }
+        .btn-success.btn-custom:hover {
+            background-color: #218838 !important;
+            border-color: #1e7e34 !important;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+   {% include 'frontend/header.html.twig' %}
+
+    <div style="height: 50px;"></div>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="h2">Nouvelle réclamation</h1>
+                    <a href="{{ path('app_produitss') }}" class="btn btn-outline-primary btn-custom">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Retour aux produits</span>
+                    </a>
+                </div>
+
+                <div class="reclamation-container">
+                    <div class="product-info">
+                        <div class="info-title">
+                            <i class="fas fa-box"></i>
+                            <span>Produit concerné : {{ produit.nomProduit }}</span>
+                        </div>
+                    </div>
+
+                    {{ include('reclamation/_form.html.twig') }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="height: 50px;"></div>
+
+    {% include 'frontend/footer.html.twig' %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const messageField = document.querySelector('textarea[name="reclamation[message_reclamation]"]');
+            const charCount = document.getElementById('charCount');
+            const maxLength = 1000;
+
+            function updateCharCount() {
+                const remaining = maxLength - messageField.value.length;
+                charCount.textContent = remaining;
+                
+                if (remaining < 100) {
+                    charCount.style.color = '#dc3545';
+                } else if (remaining < 200) {
+                    charCount.style.color = '#ffc107';
+                } else {
+                    charCount.style.color = '#6c757d';
+                }
+            }
+
+            if (messageField && charCount) {
+                messageField.addEventListener('input', updateCharCount);
+                updateCharCount();
+            }
+
+            const form = document.getElementById('reclamationForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const messageLength = messageField.value.length;
+                    if (messageLength < 10 || messageLength > maxLength) {
+                        e.preventDefault();
+                        alert('Le message doit contenir entre 10 et 1000 caractères');
+                        return false;
+                    }
+                    
+                    const submitButton = form.querySelector('button[type="submit"]');
+                    if (submitButton) {
+                        submitButton.disabled = true;
+                    }
+                    return true;
+                });
+            }
+
+            // Désactiver nice-select
+            jQuery.fn.niceSelect = function() { return this; };
+        });
+    </script>
+{% endblock %}

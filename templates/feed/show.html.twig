@@ -1,0 +1,42 @@
+{% extends 'basefeed.html.twig' %}
+
+{% block title %}Feed Details{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="mb-4">Feed Details</h1>
+
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <th scope="row">ID</th>
+                    <td>{{ feed.id }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Name</th>
+                    <td>{{ feed.nameFeed }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Email</th>
+                    <td>{{ feed.emailFeed }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Comment</th>
+                    <td>{{ feed.commentaireFeed }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Subject</th>
+                    <td>{{ feed.subjectFeed }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Date</th>
+                    <td>{{ feed.dateFeed ? feed.dateFeed|date('Y-m-d') : '' }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        {# Boutons pour éditer et retourner à la liste #}
+        <a href="{{ path('app_feed_edit', {'id': feed.id}) }}" class="btn btn-warning">Edit</a>
+        <a href="{{ path('app_feed_index') }}" class="btn btn-secondary">Back to List</a>
+    </div>
+{% endblock %}

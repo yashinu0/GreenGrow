@@ -1,0 +1,395 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conversation avec le Chatbot{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .chat-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 10px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .message.user {
+            background: #28a745;
+            color: white;
+            margin-left: auto;
+        }
+
+        .message.bot {
+            background: #e9ecef;
+            color: #212529;
+        }
+
+        .message-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .message-input input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+
+        .message-input button {
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .message-input button:hover {
+            background: #218838;
+        }
+
+        .message-input button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .message-time {
+            font-size: 0.8em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .error-message {
+            color: #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            display: none;
+        }
+        
+        .error-message small {
+            display: block;
+            margin-top: 8px;
+            color: #6c757d;
+        }
+        
+        .error-message.rate-limit {
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+            color: #856404;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+ <header>
+      <!-- header inner -->
+      <div class="header">
+        <div class="container" style="height: 76px;">
+          <div class="row">
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col logo_section">
+              <div class="full">
+                <div class="center-desk">
+                  <div class="logo"> <a href="index.html"><img src="{{asset('images/logo.png')}}" alt="#" width="85" height="200"></a> </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9">
+              <div class="location_icon_bottum_tt">
+                <ul>
+                  <li><img src="{{asset('icon/email1.png')}}">GreenGrow@gmail.com</li>
+                  <li><img src="{{asset('icon/call1.png')}}">(+216) 25845846</li>
+                  <li>
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12"> <button class="send" style="width: 120px; margin-left: 700px; margin-top: -100px; height: 60px;">Inscription</button>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 location_icon_bottum" style="margin-top: -68px; height: 69px;">
+              <div class="row"> 
+                <div class="col-md-8 ">
+                  <div class="menu-area">
+                    <div class="limit-box">
+                      <nav class="main-menu">
+                        <ul class="menu-area-main">
+                          <li class="active"> <a href="index.html">Home</a> </li>
+                          <li> <a href="#about">About</a> </li>
+                          <li><a href="#product">Products</a></li>
+                          <li><a href="#testimonial">Testimonial</a></li>
+                          <li><a href="#contact">Contact Us</a></li>
+                        </ul>
+                      </nav>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                  <form class="search"> <input class="form-control" placeholder="Search" type="text"> <button><img src="{{asset('images/search_icon.png')}}"></button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end header inner --> </header>
+      
+      <div style="height: 80px;"></div>
+
+    <div class="chat-container">
+        <h2 class="mb-4">Conversation avec l'Assistant IA</h2>
+        <h4 class="mb-4">Réclamation #{{ reclamation.id }}</h4>
+        <div class="error-message" id="errorMessage"></div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <!-- Les messages seront chargés ici dynamiquement -->
+        </div>
+
+        <div class="message-input">
+            <input type="text" id="messageInput" placeholder="Tapez votre message ici..." class="form-control">
+            <button id="sendButton" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i> Envoyer
+            </button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function() {
+            console.log('Chat initialization started');
+            
+            const reclamationId = {{ reclamation.id }};
+            const messageInput = $('#messageInput');
+            const sendButton = $('#sendButton');
+            const chatMessages = $('#chatMessages');
+            const errorMessage = $('#errorMessage');
+
+            function showError(message, details = '') {
+                console.log('Showing error:', message, details);
+                let errorText = `<strong>${message}</strong>`;
+                if (details) {
+                    errorText += `<small>${details}</small>`;
+                }
+                
+                // Ajouter une classe spéciale pour l'erreur de limite de requêtes
+                errorMessage.removeClass('rate-limit');
+                if (message.includes('utilisation intensive')) {
+                    errorMessage.addClass('rate-limit');
+                }
+                
+                errorMessage.html(errorText).show();
+                setTimeout(() => errorMessage.hide(), 15000);  // Augmenter à 15 secondes
+            }
+
+            function loadChatHistory() {
+                console.log('Loading chat history');
+                $.ajax({
+                    url: `/chatbot/history/${reclamationId}`,
+                    method: 'GET',
+                    success: function(history) {
+                        console.log('Chat history loaded:', history);
+                        chatMessages.empty();
+                        
+                        if (history && Array.isArray(history)) {
+                            history.forEach(item => {
+                                if (item.message) {
+                                    appendMessage(item.message, 'user', item.createdAt);
+                                }
+                                if (item.response) {
+                                    appendMessage(item.response, 'bot', item.createdAt);
+                                }
+                            });
+                        }
+                        
+                        scrollToBottom();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error loading chat history:', error);
+                        showError('Erreur lors du chargement de l\'historique des messages');
+                    }
+                });
+            }
+
+            function appendMessage(content, type, timestamp) {
+                if (!content) return;
+                console.log('Appending message:', { content, type, timestamp });
+                
+                const messageDiv = $('<div>')
+                    .addClass(`message ${type}`)
+                    .html(`
+                        ${content}
+                        <div class="message-time">${formatTimestamp(timestamp)}</div>
+                    `);
+                chatMessages.append(messageDiv);
+            }
+
+            function formatTimestamp(timestamp) {
+                if (!timestamp) return '';
+                try {
+                    return new Date(timestamp).toLocaleTimeString();
+                } catch (e) {
+                    console.error('Error formatting timestamp:', e);
+                    return '';
+                }
+            }
+
+            function scrollToBottom() {
+                chatMessages.scrollTop(chatMessages[0].scrollHeight);
+            }
+
+            function sendMessage() {
+                const message = messageInput.val().trim();
+                console.log('Sending message:', message);
+                
+                if (!message) {
+                    showError('Veuillez entrer un message');
+                    return;
+                }
+
+                // Désactiver le bouton d'envoi et l'input pendant l'envoi
+                sendButton.prop('disabled', true);
+                messageInput.prop('disabled', true);
+
+                // Afficher immédiatement le message de l'utilisateur
+                appendMessage(message, 'user', new Date().toISOString());
+                scrollToBottom();
+                
+                // Vider l'input
+                messageInput.val('');
+
+                // Envoyer le message au serveur
+                $.ajax({
+                    url: `/chatbot/send-message/${reclamationId}`,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ message }),
+                    success: function(data) {
+                        console.log('Message sent, response received:', data);
+                        if (data.response) {
+                            appendMessage(data.response, 'bot', new Date().toISOString());
+                            scrollToBottom();
+                        } else if (data.error) {
+                            showError(data.error, data.details);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error sending message:', xhr.responseJSON);
+                        let errorMessage = 'Erreur lors de l\'envoi du message';
+                        let errorDetails = '';
+                        
+                        if (xhr.responseJSON) {
+                            errorMessage = xhr.responseJSON.error || errorMessage;
+                            errorDetails = xhr.responseJSON.details || '';
+                        }
+                        
+                        showError(errorMessage, errorDetails);
+                    },
+                    complete: function() {
+                        // Réactiver le bouton d'envoi et l'input
+                        sendButton.prop('disabled', false);
+                        messageInput.prop('disabled', false);
+                        messageInput.focus();
+                    }
+                });
+            }
+
+            // Charger l'historique au chargement de la page
+            loadChatHistory();
+
+            // Ajouter les écouteurs d'événements
+            sendButton.on('click', sendMessage);
+            messageInput.on('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            console.log('Chat initialization completed');
+        });
+    </script>
+
+    <div style="height: 30px;"></div>
+
+
+    <!--  footer --> <footr>
+      <div class="footer top_layer ">
+        <div class="container">
+          <div class="row">
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+              <div class="address"> <a href="index.html"> <img src="{{asset('images/logo.png')}}" alt="logo" width="85" height="200"></a>
+                <p>Optimisez votre agriculture avec nos capteurs IoT
+                  intelligents</p>
+              </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+              <div class="address">
+                <h3>Liens rapides</h3>
+                <ul class="Links_footer">
+                  <li><img src="{{asset('icon/3.png')}}" alt="#"> <a href="#">Maintenance</a>
+                  </li>
+                  <li><img src="{{asset('icon/3.png')}}" alt="#"> <a href="#"> Join Us</a> </li>
+                  <li><img src="{{asset('icon/3.png')}}" alt="#"> <a href="#">Language Packs</a>
+                  </li>
+                  <li><img src="{{asset('icon/3.png')}}" alt="#"> <a href="#">LearnPress</a>
+                  </li>
+                  <li><img src="{{asset('icon/3.png')}}" alt="#"> <a href="#">Release Status</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+              <div class="address">
+                <h3>Subcribe email</h3>
+                <input class="form-control" placeholder="Your Email" name="Your Email" type="type"> <button class="submit-btn">Envoyer</button> </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+              <div class="address">
+                <h3>Contact Us</h3>
+                <ul class="loca">
+                  <li> <a href="#"><img src="{{asset('icon/loc.png')}}" alt="#"></a>Ghazela
+                    <br>
+                    Ariana Tunis</li>
+                  <li> <a href="#"><img src="{{asset('icon/email.png')}}" alt="#"></a>GreenGrow@gmail.com
+                    </li>
+                  <li> <a href="#"><img src="{{asset('icon/call.png')}}" alt="#"></a>+216
+                    25845846 </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="copyright">
+        <div class="container">
+          <p> 2025 All Rights Reserved. Design By<a href=""> Selim Gharbi</a></p>
+        </div>
+      </div>
+    </footr>
+{% endblock %}

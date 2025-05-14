@@ -1,0 +1,137 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Produit{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-steps/1.1.0/jquery.steps.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    
+    <style>
+        .container-form {
+            max-width: 800px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        #map {
+            height: 400px;
+            margin-top: 20px;
+        }
+        #out-of-stock {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            text-align: center;
+        }
+        #out-of-stock img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+{% endblock %}
+
+{% block section %}
+<div class="container-form">
+    <h1>Produit Details</h1>
+
+    <div class="card">
+        {% if produit.imageProduit %}
+            <img id="product-image" src="{{ asset('images/' ~ produit.imageProduit) }}" class="card-img-top" alt="{{ produit.nomProduit }}">
+        {% else %}
+            <img id="product-image" src="{{ asset('images/no-image.png') }}" class="card-img-top" alt="No image">
+        {% endif %}
+        <div class="card-body">
+            <h5 class="card-title">{{ produit.nomProduit }}</h5>
+            <p class="card-text">{{ produit.descriptionProduit }}</p>
+            <p class="card-text"><strong>Price:</strong> {{ produit.prixProduit }}</p>
+            <p class="card-text"><strong>Availability:</strong> {{ produit.disponibilteProduit }}</p>
+            <p class="card-text"><strong>Location:</strong> {{ produit.location }}</p>
+            <p class="card-text"><strong>Quantity:</strong> <span id="product-quantity">{{ produit.quantite }}</span></p>
+        </div>
+    </div>
+    
+    <div id="map"></div>
+        
+    <a id="order-button" class="btn btn-success mt-3" href="{{ path('app_produitss') }}">Passer Commande</a>
+    <a class="btn btn-danger mt-3" href="{{ path('app_reclamation_new', {'productId': produit.id}) }}">Faire une réclamation</a> 
+    <a class="btn btn-secondary mt-3" href="{{ path('app_produitss') }}">Back to list</a>
+
+    <a class="btn btn-info mt-3" href="{{ path('produit_qrcode', { 'id': produit.id }) }}" target="_blank">Afficher QR Code</a>
+</div>
+
+<div id="out-of-stock">
+    <img src="{{ asset('assets/images/horsstoke.png') }}" alt="Out of Stock">
+</div>
+{% endblock %}
+
+{% block js %}
+    {{ parent() }}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-steps/1.1.0/jquery.steps.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var map = L.map('map').setView([51.505, -0.09], 13); // Default coordinates, you should replace them with the actual location coordinates
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            var marker = L.marker([51.505, -0.09]).addTo(map); // Default coordinates, you should replace them with the actual location coordinates
+
+            // If you have the actual coordinates from the produit.location, you can set them here
+            {% if produit.location %}
+                var location = "{{ produit.location }}";
+                // need to convert the location string to coordinates
+                // For example, if location is "51.505, -0.09", you can split it into latitude and longitude
+                var coords = location.split(',');
+                var lat = parseFloat(coords[0]);
+                var lng = parseFloat(coords[1]);
+                map.setView([lat, lng], 13);
+                marker.setLatLng([lat, lng]);
+            {% endif %}
+
+            var orderButton = document.getElementById('order-button');
+            var quantityElement = document.getElementById('product-quantity');
+            var quantity = parseInt(quantityElement.textContent);
+            var productImage = document.getElementById('product-image');
+            var outOfStockBox = document.getElementById('out-of-stock');
+
+            orderButton.addEventListener('click', function (event) {
+                event.preventDefault(); // Prevent the default action of the button
+                if (quantity > 0) {
+                    $.ajax({
+                        url: '{{ path('app_produit_decrease_quantity', { 'id': produit.id }) }}',
+                        type: 'POST',
+                        success: function (response) {
+                            quantity = response.newQuantity;
+                            quantityElement.textContent = quantity;
+                            if (quantity === 0) {
+                                outOfStockBox.style.display = 'block';
+                            }
+                        },
+                        error: function (response) {
+                            alert(response.responseJSON.error);
+                        }
+                    });
+                } else {
+                    alert('No more products available.');
+                }
+            });
+        });
+    </script>
+{% endblock %}

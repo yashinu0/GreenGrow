@@ -1,0 +1,77 @@
+{% extends 'backend/indexbackend.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        .statistics-summary {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .statistics-container {
+            width: 100%;
+            height: 400px;
+            margin-top: 20px;
+        }
+    </style>
+{% endblock %}
+
+{% block title %}Statistiques des Utilisateurs Désactivés{% endblock %}
+
+{% block content %}
+    <h1>Statistiques des Utilisateurs Désactivés</h1>
+
+    <div class="statistics-summary">
+        <p>Total des utilisateurs désactivés : {{ totalDesactives }}</p>
+    </div>
+
+    <div class="statistics-container">
+        <canvas id="roleDistributionChart"></canvas>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('roleDistributionChart').getContext('2d');
+
+const roleStats = {{ roleStats | json_encode | raw }}; // Récupération des données depuis le contrôleur
+
+            const labels = Object.keys(roleStats); // Récupération des rôles
+            const data = Object.values(roleStats); // Récupération des comptes pour chaque rôle
+
+            const roleDistributionChart = new Chart(ctx, {
+                type: 'bar', // Type de graphique (barres)
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Nombre d\'utilisateurs',
+                        data: data,
+                        backgroundColor: '#007bff', // Couleur des barres
+                        borderColor: '#0056b3',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            enabled: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

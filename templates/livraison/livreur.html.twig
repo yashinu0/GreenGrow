@@ -1,0 +1,458 @@
+{% extends 'melek.html.twig' %}
+
+{% block content %}
+    <div class="delivery-dashboard">
+        <!-- Card d'information du livreur -->
+        <div class="driver-card glass-effect">
+            <div class="driver-header">
+                <div class="driver-avatar">
+                    <img src="{{ asset('images/default-avatar.png') }}" alt="Driver Avatar">
+                    <div class="status-badge online"></div>
+                </div>
+                <div class="driver-info">
+                    <h2>{{ commande.livreurCommande.nomLivreur }} {{ commande.livreurCommande.prenomLivreur }}</h2>
+                    <span class="badge delivery-status">En livraison</span>
+                </div>
+            </div>
+            <div class="delivery-details">
+                <div class="detail-item">
+                    <i class="fas fa-box"></i>
+                    <div>
+                        <label>Commande</label>
+                        <span>#{{ commande.idCommande }}</span>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-clock"></i>
+                    <div>
+                        <label>Date</label>
+                        <span>{{ commande.dateCommande|date('d/m/Y H:i') }}</span>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-euro-sign"></i>
+                    <div>
+                        <label>Montant</label>
+                        <span>{{ commande.prixtotalCommande }} €</span>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-credit-card"></i>
+                    <div>
+                        <label>Paiement</label>
+                        <span>{{ commande.modepaiementCommande }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carte et contrôles -->
+        <div class="tracking-section glass-effect">
+            <div class="tracking-controls">
+                <button id="startTracking" class="control-btn start-btn">
+                    <i class="fas fa-location-arrow"></i>
+                    <span>Démarrer le suivi</span>
+                </button>
+                <button id="stopTracking" class="control-btn stop-btn" style="display: none;">
+                    <i class="fas fa-stop-circle"></i>
+                    <span>Arrêter le suivi</span>
+                </button>
+            </div>
+            
+            <div id="map-container">
+                <div id="map"></div>
+                <div class="map-overlay">
+                    <div id="trackingStatus" class="status-pill tracking-inactive">
+                        <i class="fas fa-satellite-dish"></i>
+                        <span>GPS inactif</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tracking-info">
+                <div id="currentPosition" class="position-display">
+                    <i class="fas fa-crosshairs"></i>
+                    <span>En attente de position...</span>
+                </div>
+                <div id="debug" class="debug-info"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .delivery-dashboard {
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        /* Driver Card Styles */
+        .driver-card {
+            padding: 1.5rem;
+        }
+
+        .driver-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .driver-avatar {
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .driver-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .status-badge {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4CAF50;
+            border: 2px solid white;
+        }
+
+        .driver-info h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #2c3e50;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .delivery-status {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+            color: white;
+        }
+
+        .delivery-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(247, 248, 249, 0.8);
+            border-radius: 12px;
+        }
+
+        .detail-item i {
+            font-size: 1.5rem;
+            color: #3498db;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 10px;
+        }
+
+        .detail-item div {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-item label {
+            font-size: 0.875rem;
+            color: #7f8c8d;
+        }
+
+        .detail-item span {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        /* Tracking Section Styles */
+        .tracking-section {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .tracking-controls {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .control-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #4CAF50, #8BC34A);
+            color: white;
+        }
+
+        .start-btn:hover {
+            background: linear-gradient(135deg, #43A047, #7CB342);
+            transform: translateY(-2px);
+        }
+
+        .stop-btn {
+            background: linear-gradient(135deg, #f44336, #ff5252);
+            color: white;
+        }
+
+        .stop-btn:hover {
+            background: linear-gradient(135deg, #e53935, #ff1744);
+            transform: translateY(-2px);
+        }
+
+        #map-container {
+            position: relative;
+            height: 500px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+            border-radius: 12px;
+        }
+
+        .map-overlay {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1000;
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 30px;
+            font-weight: 500;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tracking-active {
+            background: linear-gradient(135deg, #4CAF50, #8BC34A);
+            color: white;
+        }
+
+        .tracking-inactive {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            color: white;
+        }
+
+        .tracking-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .position-display {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: rgba(247, 248, 249, 0.8);
+            border-radius: 12px;
+            font-size: 0.9375rem;
+        }
+
+        .position-display i {
+            color: #3498db;
+        }
+
+        .debug-info {
+            padding: 0.75rem;
+            background: rgba(44, 62, 80, 0.05);
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.875rem;
+            color: #34495e;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 1200px) {
+            .delivery-dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block js %}
+    {{ parent() }}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("Page chargée");
+            
+            const debug = document.getElementById('debug');
+            const startButton = document.getElementById('startTracking');
+            const stopButton = document.getElementById('stopTracking');
+            const statusText = document.getElementById('trackingStatus');
+            const positionDisplay = document.getElementById('currentPosition');
+            
+            function updateDebug(message) {
+                console.log(message);
+                if (debug) debug.textContent = message;
+            }
+            
+            updateDebug("Initialisation...");
+
+            // Initialiser la carte
+            const map = L.map('map').setView([36.8065, 10.1815], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: ' OpenStreetMap contributors'
+            }).addTo(map);
+
+            let marker = null;
+            let watchId = null;
+
+            startButton.onclick = function() {
+                updateDebug("Démarrage du suivi GPS...");
+                
+                if (!navigator.geolocation) {
+                    alert("La géolocalisation n'est pas supportée par votre navigateur");
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        updateDebug("Position initiale obtenue");
+                        
+                        const latLng = [position.coords.latitude, position.coords.longitude];
+                        if (!marker) {
+                            marker = L.marker(latLng).addTo(map);
+                        } else {
+                            marker.setLatLng(latLng);
+                        }
+                        map.setView(latLng, 16);
+                        
+                        startButton.style.display = 'none';
+                        stopButton.style.display = 'flex';
+                        statusText.innerHTML = '<i class="fas fa-satellite-dish"></i><span>GPS actif</span>';
+                        statusText.className = 'status-pill tracking-active';
+                        positionDisplay.innerHTML = `<i class="fas fa-crosshairs"></i><span>${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}</span>`;
+
+                        // Démarrer le suivi continu
+                        watchId = navigator.geolocation.watchPosition(
+                            updatePosition,
+                            handleError,
+                            { enableHighAccuracy: true }
+                        );
+                    },
+                    handleError,
+                    { enableHighAccuracy: true }
+                );
+            };
+
+            function updatePosition(position) {
+                const latLng = [position.coords.latitude, position.coords.longitude];
+                if (marker) {
+                    marker.setLatLng(latLng);
+                    map.setView(latLng);
+                }
+                positionDisplay.innerHTML = `<i class="fas fa-crosshairs"></i><span>${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}</span>`;
+                
+                // Envoyer la position au serveur
+                fetch(`/livraison/{{ commande.idCommande }}/position`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    })
+                }).catch(error => updateDebug("Erreur d'envoi: " + error));
+            }
+
+            function handleError(error) {
+                let message = "";
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        message = "Accès à la position refusé";
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        message = "Position non disponible";
+                        break;
+                    case error.TIMEOUT:
+                        message = "Délai d'attente dépassé";
+                        break;
+                    default:
+                        message = "Erreur inconnue";
+                }
+                updateDebug("Erreur GPS: " + message);
+                alert(message);
+            }
+
+            stopButton.onclick = function() {
+                updateDebug("Arrêt du suivi GPS");
+                if (watchId) {
+                    navigator.geolocation.clearWatch(watchId);
+                    watchId = null;
+                }
+                
+                stopButton.style.display = 'none';
+                startButton.style.display = 'flex';
+                statusText.innerHTML = '<i class="fas fa-satellite-dish"></i><span>GPS inactif</span>';
+                statusText.className = 'status-pill tracking-inactive';
+                positionDisplay.innerHTML = '<i class="fas fa-crosshairs"></i><span>En attente de position...</span>';
+            };
+
+            // Forcer un rafraîchissement de la carte
+            setTimeout(() => {
+                map.invalidateSize();
+                updateDebug("Carte initialisée");
+            }, 100);
+        });
+    </script>
+{% endblock %}

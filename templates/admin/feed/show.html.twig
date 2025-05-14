@@ -1,0 +1,176 @@
+{% extends 'backend/indexbackend.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
+    <link rel="stylesheet" href="{{ asset('css/mdb.min.css') }}" />
+    <style>
+        .card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            border: none;
+            margin-bottom: 1.5rem;
+        }
+        .card-header {
+            background-color: #006400;
+            color: white;
+            border-radius: 8px 8px 0 0;
+            padding: 1rem;
+        }
+        .btn-primary {
+            background-color: #006400;
+            border-color: #006400;
+        }
+        .btn-primary:hover {
+            background-color: #004d00;
+            border-color: #004d00;
+        }
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        .badge {
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        .message-content {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+        .breadcrumb-item a {
+            color: #006400;
+            text-decoration: none;
+        }
+        .breadcrumb-item.active {
+            color: #666;
+        }
+        .btn-action {
+            border-radius: 20px;
+            padding: 8px 16px;
+        }
+    </style>
+{% endblock %}
+
+{% block title %}Détails du Feed{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mt-4">Détails du Feed</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('admin_feed_list') }}">Feedbacks</a></li>
+                <li class="breadcrumb-item active">Détails</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-user me-2"></i>
+                    Informations de l'expéditeur
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="avatar-lg bg-light rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                            <span class="h3 text-dark mb-0">{{ feed.nameFeed|first|upper }}</span>
+                        </div>
+                        <div>
+                            <h5 class="mb-1">{{ feed.nameFeed }}</h5>
+                            <p class="mb-0 text-muted">
+                                <a href="mailto:{{ feed.emailFeed }}" class="text-decoration-none">
+                                    <i class="fas fa-envelope me-1"></i>
+                                    {{ feed.emailFeed }}
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="text-muted mb-1">Date d'envoi</label>
+                        <p class="mb-0">
+                            <i class="far fa-calendar-alt me-1"></i>
+                            {{ feed.dateFeed|date('d/m/Y H:i') }}
+                        </p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="text-muted mb-1">Statut</label>
+                        <div>
+                            {% if feed.isProcessed %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check-circle me-1"></i> Traité
+                                </span>
+                            {% else %}
+                                <span class="badge bg-warning">
+                                    <i class="fas fa-clock me-1"></i> En attente
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-cog me-2"></i>
+                    Actions
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ path('admin_feed_status', {'id': feed.id}) }}" 
+                           class="btn btn-{{ feed.isProcessed ? 'success' : 'warning' }} btn-action">
+                            {% if feed.isProcessed %}
+                                <i class="fas fa-check-circle me-1"></i> Déjà traité
+                            {% else %}
+                                <i class="fas fa-tasks me-1"></i> Marquer comme traité
+                            {% endif %}
+                        </a>
+                        <a href="mailto:{{ feed.emailFeed }}?subject=Re: {{ feed.subjectFeed }}" 
+                           class="btn btn-info btn-action">
+                            <i class="fas fa-reply me-1"></i> Répondre par email
+                        </a>
+                        <a href="{{ path('admin_feed_delete', {'id': feed.id}) }}" 
+                           class="btn btn-danger btn-action"
+                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce message?')">
+                            <i class="fas fa-trash me-1"></i> Supprimer
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-envelope me-2"></i>
+                            Message
+                        </div>
+                        <h5 class="mb-0">{{ feed.subjectFeed }}</h5>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="message-content">
+                        {{ feed.commentaireFeed|nl2br }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="{{ path('admin_feed_list') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Retour à la liste
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,234 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Livreur{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --color-forest: #2D5A27;
+            --color-sage: #8BA888;
+            --color-moss: #B8D5B8;
+            --color-earth: #4A3B22;
+            --color-sand: #E8DCC4;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--color-moss) 0%, var(--color-sand) 100%);
+            min-height: 100vh;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(45, 90, 39, 0.2);
+            padding: 2.5rem;
+            margin: 2rem auto;
+            max-width: 800px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, var(--color-forest), var(--color-sage));
+        }
+
+        .page-title {
+            color: var(--color-forest);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .page-title::after {
+            content: '🌱';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5rem;
+        }
+
+        .nature-form .form-fields {
+            display: grid;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .nature-form .form-group {
+            display: flex;
+            gap: 1rem;
+            background: linear-gradient(to right bottom, rgba(184, 213, 184, 0.1), rgba(232, 220, 196, 0.2));
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(139, 168, 136, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .nature-form .form-group:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(45, 90, 39, 0.1);
+        }
+
+        .nature-form .field-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--color-forest);
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .nature-form .field-content {
+            flex: 1;
+        }
+
+        .nature-form .form-label {
+            display: block;
+            color: var(--color-forest);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nature-form .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid var(--color-sage);
+            border-radius: 10px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .nature-form .form-control:focus {
+            outline: none;
+            border-color: var(--color-forest);
+            box-shadow: 0 0 0 3px rgba(45, 90, 39, 0.2);
+        }
+
+        .nature-form .form-actions {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .btn-custom {
+            padding: 0.7rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-nature {
+            background: var(--color-forest);
+            color: white;
+        }
+
+        .btn-outline-nature {
+            color: var(--color-forest);
+            border: 2px solid var(--color-forest);
+            background: transparent;
+        }
+
+        .btn-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--color-forest), var(--color-sage));
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn-custom:hover::before {
+            opacity: 1;
+        }
+
+        .btn-custom:hover {
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(45, 90, 39, 0.2);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 1rem;
+            color: var(--color-forest);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            transform: translateX(-5px);
+            color: var(--color-sage);
+        }
+
+        .back-link i {
+            margin-right: 0.5rem;
+        }
+
+        /* Validation styles */
+        .form-error {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .form-error-icon {
+            margin-right: 0.5rem;
+            color: #dc3545;
+        }
+
+        /* File input styling */
+        .nature-form input[type="file"] {
+            padding: 0.5rem;
+            border: 2px dashed var(--color-sage);
+            background: white;
+            cursor: pointer;
+        }
+
+        .nature-form input[type="file"]:hover {
+            border-color: var(--color-forest);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="form-container">
+            <h1 class="page-title">Nouveau Livreur</h1>
+            
+            {{ include('livreur/_form.html.twig') }}
+
+            <div class="text-center mt-4">
+                <a href="{{ path('app_livreur_index') }}" class="back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Retour à la liste
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
